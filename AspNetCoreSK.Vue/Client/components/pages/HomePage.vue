@@ -4,7 +4,8 @@
         <p>asdalldsald</p>
         <hr />
         <div v-if="!sampleData.length">No items</div>
-        <ul v-if="sampleData.length">
+        <div class="alert alert-danger" v-if="sampleData.isError">{{ sampleData.errorMessage }}</div>
+        <ul v-if="sampleData.length && !sampleData.isError">
             <li v-for="item in sampleData">{{ item }}</li>
         </ul>
     </div>
@@ -14,7 +15,7 @@
 
     export default {
         name: 'home-page',
-        data: function() {
+        data() {
             return {
                 sampleData: []
             }

@@ -61,7 +61,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "867bac97ccf8ff55ba5e"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "ab5e7945b1ec33b4c6e3"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -11339,6 +11339,7 @@ exports.default = {
 //
 //
 //
+//
 
 /***/ }),
 /* 27 */
@@ -14738,7 +14739,13 @@ var render = function() {
     _vm._v(" "),
     !_vm.sampleData.length ? _c("div", [_vm._v("No items")]) : _vm._e(),
     _vm._v(" "),
-    _vm.sampleData.length
+    _vm.sampleData.isError
+      ? _c("div", { staticClass: "alert alert-danger" }, [
+          _vm._v(_vm._s(_vm.sampleData.errorMessage))
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    _vm.sampleData.length && !_vm.sampleData.isError
       ? _c(
           "ul",
           _vm._l(_vm.sampleData, function(item) {
@@ -14776,7 +14783,10 @@ var myFeatureServices = {
             return response.data;
         }).catch(function (err) {
             console.log(err);
-            return null;
+            return {
+                isError: true,
+                errorMessage: err
+            };
         });
     }
 };

@@ -8,7 +8,10 @@ let myFeatureServices = {
             .then(response => response.data)
             .catch(err => {
                 console.log(err);
-                return null;
+                return {
+                    isError: true,
+                    errorMessage: err
+                };
             });
     }
 };

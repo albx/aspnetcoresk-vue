@@ -1,31 +1,50 @@
-﻿"use strict";
+﻿'use strict';
 
 const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const distPath = path.join(__dirname, 'wwwroot');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+
+const distPath = path.resolve(__dirname, 'wwwroot');
 
 module.exports = {
     entry: {
-        'jquery': [
+        'vendor': [
             'jquery/dist/jquery.js',
-            'jquery/dist/jquery.min.js'
-        ],
-        'bootstrap': [
             'bootstrap/dist/js/bootstrap.js',
-            'bootstrap/dist/js/bootstrap.min.js',
-            'bootstrap/dist/css/bootstrap.css',
-            'bootstrap/dist/css/bootstrap.min.css'
-        ]
+            'bootstrap/dist/css/bootstrap.css'
+        ],
+        'client': './Client/bootstrapper.js'
     },
     output: {
-        path: path.resolve(__dirname, './wwwroot/dist'),
+        path: distPath,
         publicPath: '/',
         filename: 'js/[name].js'
+    },
+    module: {
+        rules: [
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
+            {
+                test: /\.js$/,
+                loader: 'babel-loader',
+                exclude: /node_modules/
+            },
+            {
+                test: /\.css$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: ['css-loader']
+                })
+            }
+        ]
     },
     resolve: {
         modules: ['./node_modules']
     },
     plugins: [
-        new ExtractTextPlugin('css/[name].css')
+        new ExtractTextPlugin('css/[name].css'),
+        new VueLoaderPlugin()
     ]
 };

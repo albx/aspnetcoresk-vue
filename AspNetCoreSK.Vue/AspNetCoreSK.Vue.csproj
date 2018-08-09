@@ -16,4 +16,6 @@
     <ProjectReference Include="..\AspNetCoreSK.Vue.Endpoint\AspNetCoreSK.Vue.Endpoint.csproj" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties package_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
+
 </Project>

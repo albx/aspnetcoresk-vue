@@ -2,8 +2,12 @@
 
 import axios from 'axios';
 
-let myFeatureServices = {
-    getSampleData: function () {
+export default class MyFeatureServices {
+    constructor(accessToken) {
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
+    }
+
+    getSampleData() {
         return axios.get('/myfeature/api/sample')
             .then(response => response.data)
             .catch(err => {
@@ -15,5 +19,3 @@ let myFeatureServices = {
             });
     }
 };
-
-export default myFeatureServices;

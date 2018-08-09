@@ -61,7 +61,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "98d0db6d13e9078588a5"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "ca56930b2bd121d3847b"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -722,7 +722,7 @@
 /******/ 	__webpack_require__.h = function() { return hotCurrentHash; };
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return hotCreateRequire(44)(__webpack_require__.s = 44);
+/******/ 	return hotCreateRequire(41)(__webpack_require__.s = 41);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -732,8 +732,8 @@
 "use strict";
 
 
-var bind = __webpack_require__(27);
-var isBuffer = __webpack_require__(49);
+var bind = __webpack_require__(26);
+var isBuffer = __webpack_require__(46);
 
 /*global toString:true*/
 
@@ -9074,7 +9074,7 @@ if (inBrowser) {
 
 /* harmony default export */ __webpack_exports__["default"] = (Vue);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(4), __webpack_require__(3), __webpack_require__(46).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(4), __webpack_require__(3), __webpack_require__(43).setImmediate))
 
 /***/ }),
 /* 2 */
@@ -9491,6 +9491,1433 @@ process.umask = function() { return 0; };
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(__resourceQuery, module) {/*eslint-env browser*/
+/*global __resourceQuery __webpack_public_path__*/
+
+var options = {
+  path: "/__webpack_hmr",
+  timeout: 20 * 1000,
+  overlay: true,
+  reload: false,
+  log: true,
+  warn: true,
+  name: '',
+  autoConnect: true,
+  overlayStyles: {},
+  overlayWarnings: false,
+  ansiColors: {}
+};
+if (true) {
+  var querystring = __webpack_require__(7);
+  var overrides = querystring.parse(__resourceQuery.slice(1));
+  setOverrides(overrides);
+}
+
+if (typeof window === 'undefined') {
+  // do nothing
+} else if (typeof window.EventSource === 'undefined') {
+  console.warn(
+    "webpack-hot-middleware's client requires EventSource to work. " +
+    "You should include a polyfill if you want to support this browser: " +
+    "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events#Tools"
+  );
+} else {
+  if (options.autoConnect) {
+    connect();
+  }
+}
+
+/* istanbul ignore next */
+function setOptionsAndConnect(overrides) {
+  setOverrides(overrides);
+  connect();
+}
+
+function setOverrides(overrides) {
+  if (overrides.autoConnect) options.autoConnect = overrides.autoConnect == 'true';
+  if (overrides.path) options.path = overrides.path;
+  if (overrides.timeout) options.timeout = overrides.timeout;
+  if (overrides.overlay) options.overlay = overrides.overlay !== 'false';
+  if (overrides.reload) options.reload = overrides.reload !== 'false';
+  if (overrides.noInfo && overrides.noInfo !== 'false') {
+    options.log = false;
+  }
+  if (overrides.name) {
+    options.name = overrides.name;
+  }
+  if (overrides.quiet && overrides.quiet !== 'false') {
+    options.log = false;
+    options.warn = false;
+  }
+
+  if (overrides.dynamicPublicPath) {
+    options.path = __webpack_require__.p + options.path;
+  }
+
+  if (overrides.ansiColors) options.ansiColors = JSON.parse(overrides.ansiColors);
+  if (overrides.overlayStyles) options.overlayStyles = JSON.parse(overrides.overlayStyles);
+
+  if (overrides.overlayWarnings) {
+    options.overlayWarnings = overrides.overlayWarnings == 'true';
+  }
+}
+
+function EventSourceWrapper() {
+  var source;
+  var lastActivity = new Date();
+  var listeners = [];
+
+  init();
+  var timer = setInterval(function() {
+    if ((new Date() - lastActivity) > options.timeout) {
+      handleDisconnect();
+    }
+  }, options.timeout / 2);
+
+  function init() {
+    source = new window.EventSource(options.path);
+    source.onopen = handleOnline;
+    source.onerror = handleDisconnect;
+    source.onmessage = handleMessage;
+  }
+
+  function handleOnline() {
+    if (options.log) console.log("[HMR] connected");
+    lastActivity = new Date();
+  }
+
+  function handleMessage(event) {
+    lastActivity = new Date();
+    for (var i = 0; i < listeners.length; i++) {
+      listeners[i](event);
+    }
+  }
+
+  function handleDisconnect() {
+    clearInterval(timer);
+    source.close();
+    setTimeout(init, options.timeout);
+  }
+
+  return {
+    addMessageListener: function(fn) {
+      listeners.push(fn);
+    }
+  };
+}
+
+function getEventSourceWrapper() {
+  if (!window.__whmEventSourceWrapper) {
+    window.__whmEventSourceWrapper = {};
+  }
+  if (!window.__whmEventSourceWrapper[options.path]) {
+    // cache the wrapper for other entries loaded on
+    // the same page with the same options.path
+    window.__whmEventSourceWrapper[options.path] = EventSourceWrapper();
+  }
+  return window.__whmEventSourceWrapper[options.path];
+}
+
+function connect() {
+  getEventSourceWrapper().addMessageListener(handleMessage);
+
+  function handleMessage(event) {
+    if (event.data == "\uD83D\uDC93") {
+      return;
+    }
+    try {
+      processMessage(JSON.parse(event.data));
+    } catch (ex) {
+      if (options.warn) {
+        console.warn("Invalid HMR message: " + event.data + "\n" + ex);
+      }
+    }
+  }
+}
+
+// the reporter needs to be a singleton on the page
+// in case the client is being used by multiple bundles
+// we only want to report once.
+// all the errors will go to all clients
+var singletonKey = '__webpack_hot_middleware_reporter__';
+var reporter;
+if (typeof window !== 'undefined') {
+  if (!window[singletonKey]) {
+    window[singletonKey] = createReporter();
+  }
+  reporter = window[singletonKey];
+}
+
+function createReporter() {
+  var strip = __webpack_require__(10);
+
+  var overlay;
+  if (typeof document !== 'undefined' && options.overlay) {
+    overlay = __webpack_require__(12)({
+      ansiColors: options.ansiColors,
+      overlayStyles: options.overlayStyles
+    });
+  }
+
+  var styles = {
+    errors: "color: #ff0000;",
+    warnings: "color: #999933;"
+  };
+  var previousProblems = null;
+  function log(type, obj) {
+    var newProblems = obj[type].map(function(msg) { return strip(msg); }).join('\n');
+    if (previousProblems == newProblems) {
+      return;
+    } else {
+      previousProblems = newProblems;
+    }
+
+    var style = styles[type];
+    var name = obj.name ? "'" + obj.name + "' " : "";
+    var title = "[HMR] bundle " + name + "has " + obj[type].length + " " + type;
+    // NOTE: console.warn or console.error will print the stack trace
+    // which isn't helpful here, so using console.log to escape it.
+    if (console.group && console.groupEnd) {
+      console.group("%c" + title, style);
+      console.log("%c" + newProblems, style);
+      console.groupEnd();
+    } else {
+      console.log(
+        "%c" + title + "\n\t%c" + newProblems.replace(/\n/g, "\n\t"),
+        style + "font-weight: bold;",
+        style + "font-weight: normal;"
+      );
+    }
+  }
+
+  return {
+    cleanProblemsCache: function () {
+      previousProblems = null;
+    },
+    problems: function(type, obj) {
+      if (options.warn) {
+        log(type, obj);
+      }
+      if (overlay) {
+        if (options.overlayWarnings || type === 'errors') {
+          overlay.showProblems(type, obj[type]);
+          return false;
+        }
+        overlay.clear();
+      }
+      return true;
+    },
+    success: function() {
+      if (overlay) overlay.clear();
+    },
+    useCustomOverlay: function(customOverlay) {
+      overlay = customOverlay;
+    }
+  };
+}
+
+var processUpdate = __webpack_require__(17);
+
+var customHandler;
+var subscribeAllHandler;
+function processMessage(obj) {
+  switch(obj.action) {
+    case "building":
+      if (options.log) {
+        console.log(
+          "[HMR] bundle " + (obj.name ? "'" + obj.name + "' " : "") +
+          "rebuilding"
+        );
+      }
+      break;
+    case "built":
+      if (options.log) {
+        console.log(
+          "[HMR] bundle " + (obj.name ? "'" + obj.name + "' " : "") +
+          "rebuilt in " + obj.time + "ms"
+        );
+      }
+      // fall through
+    case "sync":
+      if (obj.name && options.name && obj.name !== options.name) {
+        return;
+      }
+      var applyUpdate = true;
+      if (obj.errors.length > 0) {
+        if (reporter) reporter.problems('errors', obj);
+        applyUpdate = false;
+      } else if (obj.warnings.length > 0) {
+        if (reporter) {
+          var overlayShown = reporter.problems('warnings', obj);
+          applyUpdate = overlayShown;
+        }
+      } else {
+        if (reporter) {
+          reporter.cleanProblemsCache();
+          reporter.success();
+        }
+      }
+      if (applyUpdate) {
+        processUpdate(obj.hash, obj.modules, options);
+      }
+      break;
+    default:
+      if (customHandler) {
+        customHandler(obj);
+      }
+  }
+
+  if (subscribeAllHandler) {
+    subscribeAllHandler(obj);
+  }
+}
+
+if (module) {
+  module.exports = {
+    subscribeAll: function subscribeAll(handler) {
+      subscribeAllHandler = handler;
+    },
+    subscribe: function subscribe(handler) {
+      customHandler = handler;
+    },
+    useCustomOverlay: function useCustomOverlay(customOverlay) {
+      if (reporter) reporter.useCustomOverlay(customOverlay);
+    },
+    setOptionsAndConnect: setOptionsAndConnect
+  };
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, "?path=__webpack_hmr&dynamicPublicPath=true", __webpack_require__(6)(module)))
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = function(module) {
+	if(!module.webpackPolyfill) {
+		module.deprecate = function() {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if(!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.decode = exports.parse = __webpack_require__(8);
+exports.encode = exports.stringify = __webpack_require__(9);
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
+// If obj.hasOwnProperty has been overridden, then calling
+// obj.hasOwnProperty(prop) will break.
+// See: https://github.com/joyent/node/issues/1707
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+module.exports = function(qs, sep, eq, options) {
+  sep = sep || '&';
+  eq = eq || '=';
+  var obj = {};
+
+  if (typeof qs !== 'string' || qs.length === 0) {
+    return obj;
+  }
+
+  var regexp = /\+/g;
+  qs = qs.split(sep);
+
+  var maxKeys = 1000;
+  if (options && typeof options.maxKeys === 'number') {
+    maxKeys = options.maxKeys;
+  }
+
+  var len = qs.length;
+  // maxKeys <= 0 means that we should not limit keys count
+  if (maxKeys > 0 && len > maxKeys) {
+    len = maxKeys;
+  }
+
+  for (var i = 0; i < len; ++i) {
+    var x = qs[i].replace(regexp, '%20'),
+        idx = x.indexOf(eq),
+        kstr, vstr, k, v;
+
+    if (idx >= 0) {
+      kstr = x.substr(0, idx);
+      vstr = x.substr(idx + 1);
+    } else {
+      kstr = x;
+      vstr = '';
+    }
+
+    k = decodeURIComponent(kstr);
+    v = decodeURIComponent(vstr);
+
+    if (!hasOwnProperty(obj, k)) {
+      obj[k] = v;
+    } else if (isArray(obj[k])) {
+      obj[k].push(v);
+    } else {
+      obj[k] = [obj[k], v];
+    }
+  }
+
+  return obj;
+};
+
+var isArray = Array.isArray || function (xs) {
+  return Object.prototype.toString.call(xs) === '[object Array]';
+};
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
+var stringifyPrimitive = function(v) {
+  switch (typeof v) {
+    case 'string':
+      return v;
+
+    case 'boolean':
+      return v ? 'true' : 'false';
+
+    case 'number':
+      return isFinite(v) ? v : '';
+
+    default:
+      return '';
+  }
+};
+
+module.exports = function(obj, sep, eq, name) {
+  sep = sep || '&';
+  eq = eq || '=';
+  if (obj === null) {
+    obj = undefined;
+  }
+
+  if (typeof obj === 'object') {
+    return map(objectKeys(obj), function(k) {
+      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
+      if (isArray(obj[k])) {
+        return map(obj[k], function(v) {
+          return ks + encodeURIComponent(stringifyPrimitive(v));
+        }).join(sep);
+      } else {
+        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
+      }
+    }).join(sep);
+
+  }
+
+  if (!name) return '';
+  return encodeURIComponent(stringifyPrimitive(name)) + eq +
+         encodeURIComponent(stringifyPrimitive(obj));
+};
+
+var isArray = Array.isArray || function (xs) {
+  return Object.prototype.toString.call(xs) === '[object Array]';
+};
+
+function map (xs, f) {
+  if (xs.map) return xs.map(f);
+  var res = [];
+  for (var i = 0; i < xs.length; i++) {
+    res.push(f(xs[i], i));
+  }
+  return res;
+}
+
+var objectKeys = Object.keys || function (obj) {
+  var res = [];
+  for (var key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) res.push(key);
+  }
+  return res;
+};
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var ansiRegex = __webpack_require__(11)();
+
+module.exports = function (str) {
+	return typeof str === 'string' ? str.replace(ansiRegex, '') : str;
+};
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+module.exports = function () {
+	return /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-PRZcf-nqry=><]/g;
+};
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*eslint-env browser*/
+
+var clientOverlay = document.createElement('div');
+clientOverlay.id = 'webpack-hot-middleware-clientOverlay';
+var styles = {
+  background: 'rgba(0,0,0,0.85)',
+  color: '#E8E8E8',
+  lineHeight: '1.2',
+  whiteSpace: 'pre',
+  fontFamily: 'Menlo, Consolas, monospace',
+  fontSize: '13px',
+  position: 'fixed',
+  zIndex: 9999,
+  padding: '10px',
+  left: 0,
+  right: 0,
+  top: 0,
+  bottom: 0,
+  overflow: 'auto',
+  dir: 'ltr',
+  textAlign: 'left'
+};
+
+var ansiHTML = __webpack_require__(13);
+var colors = {
+  reset: ['transparent', 'transparent'],
+  black: '181818',
+  red: 'E36049',
+  green: 'B3CB74',
+  yellow: 'FFD080',
+  blue: '7CAFC2',
+  magenta: '7FACCA',
+  cyan: 'C3C2EF',
+  lightgrey: 'EBE7E3',
+  darkgrey: '6D7891'
+};
+
+var Entities = __webpack_require__(14).AllHtmlEntities;
+var entities = new Entities();
+
+function showProblems(type, lines) {
+  clientOverlay.innerHTML = '';
+  lines.forEach(function(msg) {
+    msg = ansiHTML(entities.encode(msg));
+    var div = document.createElement('div');
+    div.style.marginBottom = '26px';
+    div.innerHTML = problemType(type) + ' in ' + msg;
+    clientOverlay.appendChild(div);
+  });
+  if (document.body) {
+    document.body.appendChild(clientOverlay);
+  }
+}
+
+function clear() {
+  if (document.body && clientOverlay.parentNode) {
+    document.body.removeChild(clientOverlay);
+  }
+}
+
+function problemType (type) {
+  var problemColors = {
+    errors: colors.red,
+    warnings: colors.yellow
+  };
+  var color = problemColors[type] || colors.red;
+  return (
+    '<span style="background-color:#' + color + '; color:#fff; padding:2px 4px; border-radius: 2px">' +
+      type.slice(0, -1).toUpperCase() +
+    '</span>'
+  );
+}
+
+module.exports = function(options) {
+  for (var color in options.overlayColors) {
+    if (color in colors) {
+      colors[color] = options.overlayColors[color];
+    }
+    ansiHTML.setColors(colors);
+  }
+
+  for (var style in options.overlayStyles) {
+    styles[style] = options.overlayStyles[style];
+  }
+
+  for (var key in styles) {
+    clientOverlay.style[key] = styles[key];
+  }
+
+  return {
+    showProblems: showProblems,
+    clear: clear
+  }
+};
+
+module.exports.clear = clear;
+module.exports.showProblems = showProblems;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = ansiHTML
+
+// Reference to https://github.com/sindresorhus/ansi-regex
+var _regANSI = /(?:(?:\u001b\[)|\u009b)(?:(?:[0-9]{1,3})?(?:(?:;[0-9]{0,3})*)?[A-M|f-m])|\u001b[A-M]/
+
+var _defColors = {
+  reset: ['fff', '000'], // [FOREGROUD_COLOR, BACKGROUND_COLOR]
+  black: '000',
+  red: 'ff0000',
+  green: '209805',
+  yellow: 'e8bf03',
+  blue: '0000ff',
+  magenta: 'ff00ff',
+  cyan: '00ffee',
+  lightgrey: 'f0f0f0',
+  darkgrey: '888'
+}
+var _styles = {
+  30: 'black',
+  31: 'red',
+  32: 'green',
+  33: 'yellow',
+  34: 'blue',
+  35: 'magenta',
+  36: 'cyan',
+  37: 'lightgrey'
+}
+var _openTags = {
+  '1': 'font-weight:bold', // bold
+  '2': 'opacity:0.5', // dim
+  '3': '<i>', // italic
+  '4': '<u>', // underscore
+  '8': 'display:none', // hidden
+  '9': '<del>' // delete
+}
+var _closeTags = {
+  '23': '</i>', // reset italic
+  '24': '</u>', // reset underscore
+  '29': '</del>' // reset delete
+}
+
+;[0, 21, 22, 27, 28, 39, 49].forEach(function (n) {
+  _closeTags[n] = '</span>'
+})
+
+/**
+ * Converts text with ANSI color codes to HTML markup.
+ * @param {String} text
+ * @returns {*}
+ */
+function ansiHTML (text) {
+  // Returns the text if the string has no ANSI escape code.
+  if (!_regANSI.test(text)) {
+    return text
+  }
+
+  // Cache opened sequence.
+  var ansiCodes = []
+  // Replace with markup.
+  var ret = text.replace(/\033\[(\d+)*m/g, function (match, seq) {
+    var ot = _openTags[seq]
+    if (ot) {
+      // If current sequence has been opened, close it.
+      if (!!~ansiCodes.indexOf(seq)) { // eslint-disable-line no-extra-boolean-cast
+        ansiCodes.pop()
+        return '</span>'
+      }
+      // Open tag.
+      ansiCodes.push(seq)
+      return ot[0] === '<' ? ot : '<span style="' + ot + ';">'
+    }
+
+    var ct = _closeTags[seq]
+    if (ct) {
+      // Pop sequence
+      ansiCodes.pop()
+      return ct
+    }
+    return ''
+  })
+
+  // Make sure tags are closed.
+  var l = ansiCodes.length
+  ;(l > 0) && (ret += Array(l + 1).join('</span>'))
+
+  return ret
+}
+
+/**
+ * Customize colors.
+ * @param {Object} colors reference to _defColors
+ */
+ansiHTML.setColors = function (colors) {
+  if (typeof colors !== 'object') {
+    throw new Error('`colors` parameter must be an Object.')
+  }
+
+  var _finalColors = {}
+  for (var key in _defColors) {
+    var hex = colors.hasOwnProperty(key) ? colors[key] : null
+    if (!hex) {
+      _finalColors[key] = _defColors[key]
+      continue
+    }
+    if ('reset' === key) {
+      if (typeof hex === 'string') {
+        hex = [hex]
+      }
+      if (!Array.isArray(hex) || hex.length === 0 || hex.some(function (h) {
+        return typeof h !== 'string'
+      })) {
+        throw new Error('The value of `' + key + '` property must be an Array and each item could only be a hex string, e.g.: FF0000')
+      }
+      var defHexColor = _defColors[key]
+      if (!hex[0]) {
+        hex[0] = defHexColor[0]
+      }
+      if (hex.length === 1 || !hex[1]) {
+        hex = [hex[0]]
+        hex.push(defHexColor[1])
+      }
+
+      hex = hex.slice(0, 2)
+    } else if (typeof hex !== 'string') {
+      throw new Error('The value of `' + key + '` property must be a hex string, e.g.: FF0000')
+    }
+    _finalColors[key] = hex
+  }
+  _setTags(_finalColors)
+}
+
+/**
+ * Reset colors.
+ */
+ansiHTML.reset = function () {
+  _setTags(_defColors)
+}
+
+/**
+ * Expose tags, including open and close.
+ * @type {Object}
+ */
+ansiHTML.tags = {}
+
+if (Object.defineProperty) {
+  Object.defineProperty(ansiHTML.tags, 'open', {
+    get: function () { return _openTags }
+  })
+  Object.defineProperty(ansiHTML.tags, 'close', {
+    get: function () { return _closeTags }
+  })
+} else {
+  ansiHTML.tags.open = _openTags
+  ansiHTML.tags.close = _closeTags
+}
+
+function _setTags (colors) {
+  // reset all
+  _openTags['0'] = 'font-weight:normal;opacity:1;color:#' + colors.reset[0] + ';background:#' + colors.reset[1]
+  // inverse
+  _openTags['7'] = 'color:#' + colors.reset[1] + ';background:#' + colors.reset[0]
+  // dark grey
+  _openTags['90'] = 'color:#' + colors.darkgrey
+
+  for (var code in _styles) {
+    var color = _styles[code]
+    var oriColor = colors[color] || '000'
+    _openTags[code] = 'color:#' + oriColor
+    code = parseInt(code)
+    _openTags[(code + 10).toString()] = 'background:#' + oriColor
+  }
+}
+
+ansiHTML.reset()
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = {
+  XmlEntities: __webpack_require__(15),
+  Html4Entities: __webpack_require__(16),
+  Html5Entities: __webpack_require__(2),
+  AllHtmlEntities: __webpack_require__(2)
+};
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+var ALPHA_INDEX = {
+    '&lt': '<',
+    '&gt': '>',
+    '&quot': '"',
+    '&apos': '\'',
+    '&amp': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&apos;': '\'',
+    '&amp;': '&'
+};
+
+var CHAR_INDEX = {
+    60: 'lt',
+    62: 'gt',
+    34: 'quot',
+    39: 'apos',
+    38: 'amp'
+};
+
+var CHAR_S_INDEX = {
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    '\'': '&apos;',
+    '&': '&amp;'
+};
+
+/**
+ * @constructor
+ */
+function XmlEntities() {}
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+XmlEntities.prototype.encode = function(str) {
+    if (!str || !str.length) {
+        return '';
+    }
+    return str.replace(/<|>|"|'|&/g, function(s) {
+        return CHAR_S_INDEX[s];
+    });
+};
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+ XmlEntities.encode = function(str) {
+    return new XmlEntities().encode(str);
+ };
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+XmlEntities.prototype.decode = function(str) {
+    if (!str || !str.length) {
+        return '';
+    }
+    return str.replace(/&#?[0-9a-zA-Z]+;?/g, function(s) {
+        if (s.charAt(1) === '#') {
+            var code = s.charAt(2).toLowerCase() === 'x' ?
+                parseInt(s.substr(3), 16) :
+                parseInt(s.substr(2));
+
+            if (isNaN(code) || code < -32768 || code > 65535) {
+                return '';
+            }
+            return String.fromCharCode(code);
+        }
+        return ALPHA_INDEX[s] || s;
+    });
+};
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+ XmlEntities.decode = function(str) {
+    return new XmlEntities().decode(str);
+ };
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+XmlEntities.prototype.encodeNonUTF = function(str) {
+    if (!str || !str.length) {
+        return '';
+    }
+    var strLength = str.length;
+    var result = '';
+    var i = 0;
+    while (i < strLength) {
+        var c = str.charCodeAt(i);
+        var alpha = CHAR_INDEX[c];
+        if (alpha) {
+            result += "&" + alpha + ";";
+            i++;
+            continue;
+        }
+        if (c < 32 || c > 126) {
+            result += '&#' + c + ';';
+        } else {
+            result += str.charAt(i);
+        }
+        i++;
+    }
+    return result;
+};
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+ XmlEntities.encodeNonUTF = function(str) {
+    return new XmlEntities().encodeNonUTF(str);
+ };
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+XmlEntities.prototype.encodeNonASCII = function(str) {
+    if (!str || !str.length) {
+        return '';
+    }
+    var strLenght = str.length;
+    var result = '';
+    var i = 0;
+    while (i < strLenght) {
+        var c = str.charCodeAt(i);
+        if (c <= 255) {
+            result += str[i++];
+            continue;
+        }
+        result += '&#' + c + ';';
+        i++;
+    }
+    return result;
+};
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+ XmlEntities.encodeNonASCII = function(str) {
+    return new XmlEntities().encodeNonASCII(str);
+ };
+
+module.exports = XmlEntities;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports) {
+
+var HTML_ALPHA = ['apos', 'nbsp', 'iexcl', 'cent', 'pound', 'curren', 'yen', 'brvbar', 'sect', 'uml', 'copy', 'ordf', 'laquo', 'not', 'shy', 'reg', 'macr', 'deg', 'plusmn', 'sup2', 'sup3', 'acute', 'micro', 'para', 'middot', 'cedil', 'sup1', 'ordm', 'raquo', 'frac14', 'frac12', 'frac34', 'iquest', 'Agrave', 'Aacute', 'Acirc', 'Atilde', 'Auml', 'Aring', 'Aelig', 'Ccedil', 'Egrave', 'Eacute', 'Ecirc', 'Euml', 'Igrave', 'Iacute', 'Icirc', 'Iuml', 'ETH', 'Ntilde', 'Ograve', 'Oacute', 'Ocirc', 'Otilde', 'Ouml', 'times', 'Oslash', 'Ugrave', 'Uacute', 'Ucirc', 'Uuml', 'Yacute', 'THORN', 'szlig', 'agrave', 'aacute', 'acirc', 'atilde', 'auml', 'aring', 'aelig', 'ccedil', 'egrave', 'eacute', 'ecirc', 'euml', 'igrave', 'iacute', 'icirc', 'iuml', 'eth', 'ntilde', 'ograve', 'oacute', 'ocirc', 'otilde', 'ouml', 'divide', 'oslash', 'ugrave', 'uacute', 'ucirc', 'uuml', 'yacute', 'thorn', 'yuml', 'quot', 'amp', 'lt', 'gt', 'OElig', 'oelig', 'Scaron', 'scaron', 'Yuml', 'circ', 'tilde', 'ensp', 'emsp', 'thinsp', 'zwnj', 'zwj', 'lrm', 'rlm', 'ndash', 'mdash', 'lsquo', 'rsquo', 'sbquo', 'ldquo', 'rdquo', 'bdquo', 'dagger', 'Dagger', 'permil', 'lsaquo', 'rsaquo', 'euro', 'fnof', 'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa', 'Lambda', 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega', 'alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigmaf', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega', 'thetasym', 'upsih', 'piv', 'bull', 'hellip', 'prime', 'Prime', 'oline', 'frasl', 'weierp', 'image', 'real', 'trade', 'alefsym', 'larr', 'uarr', 'rarr', 'darr', 'harr', 'crarr', 'lArr', 'uArr', 'rArr', 'dArr', 'hArr', 'forall', 'part', 'exist', 'empty', 'nabla', 'isin', 'notin', 'ni', 'prod', 'sum', 'minus', 'lowast', 'radic', 'prop', 'infin', 'ang', 'and', 'or', 'cap', 'cup', 'int', 'there4', 'sim', 'cong', 'asymp', 'ne', 'equiv', 'le', 'ge', 'sub', 'sup', 'nsub', 'sube', 'supe', 'oplus', 'otimes', 'perp', 'sdot', 'lceil', 'rceil', 'lfloor', 'rfloor', 'lang', 'rang', 'loz', 'spades', 'clubs', 'hearts', 'diams'];
+var HTML_CODES = [39, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 34, 38, 60, 62, 338, 339, 352, 353, 376, 710, 732, 8194, 8195, 8201, 8204, 8205, 8206, 8207, 8211, 8212, 8216, 8217, 8218, 8220, 8221, 8222, 8224, 8225, 8240, 8249, 8250, 8364, 402, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 931, 932, 933, 934, 935, 936, 937, 945, 946, 947, 948, 949, 950, 951, 952, 953, 954, 955, 956, 957, 958, 959, 960, 961, 962, 963, 964, 965, 966, 967, 968, 969, 977, 978, 982, 8226, 8230, 8242, 8243, 8254, 8260, 8472, 8465, 8476, 8482, 8501, 8592, 8593, 8594, 8595, 8596, 8629, 8656, 8657, 8658, 8659, 8660, 8704, 8706, 8707, 8709, 8711, 8712, 8713, 8715, 8719, 8721, 8722, 8727, 8730, 8733, 8734, 8736, 8743, 8744, 8745, 8746, 8747, 8756, 8764, 8773, 8776, 8800, 8801, 8804, 8805, 8834, 8835, 8836, 8838, 8839, 8853, 8855, 8869, 8901, 8968, 8969, 8970, 8971, 9001, 9002, 9674, 9824, 9827, 9829, 9830];
+
+var alphaIndex = {};
+var numIndex = {};
+
+var i = 0;
+var length = HTML_ALPHA.length;
+while (i < length) {
+    var a = HTML_ALPHA[i];
+    var c = HTML_CODES[i];
+    alphaIndex[a] = String.fromCharCode(c);
+    numIndex[c] = a;
+    i++;
+}
+
+/**
+ * @constructor
+ */
+function Html4Entities() {}
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+Html4Entities.prototype.decode = function(str) {
+    if (!str || !str.length) {
+        return '';
+    }
+    return str.replace(/&(#?[\w\d]+);?/g, function(s, entity) {
+        var chr;
+        if (entity.charAt(0) === "#") {
+            var code = entity.charAt(1).toLowerCase() === 'x' ?
+                parseInt(entity.substr(2), 16) :
+                parseInt(entity.substr(1));
+
+            if (!(isNaN(code) || code < -32768 || code > 65535)) {
+                chr = String.fromCharCode(code);
+            }
+        } else {
+            chr = alphaIndex[entity];
+        }
+        return chr || s;
+    });
+};
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+Html4Entities.decode = function(str) {
+    return new Html4Entities().decode(str);
+};
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+Html4Entities.prototype.encode = function(str) {
+    if (!str || !str.length) {
+        return '';
+    }
+    var strLength = str.length;
+    var result = '';
+    var i = 0;
+    while (i < strLength) {
+        var alpha = numIndex[str.charCodeAt(i)];
+        result += alpha ? "&" + alpha + ";" : str.charAt(i);
+        i++;
+    }
+    return result;
+};
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+Html4Entities.encode = function(str) {
+    return new Html4Entities().encode(str);
+};
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+Html4Entities.prototype.encodeNonUTF = function(str) {
+    if (!str || !str.length) {
+        return '';
+    }
+    var strLength = str.length;
+    var result = '';
+    var i = 0;
+    while (i < strLength) {
+        var cc = str.charCodeAt(i);
+        var alpha = numIndex[cc];
+        if (alpha) {
+            result += "&" + alpha + ";";
+        } else if (cc < 32 || cc > 126) {
+            result += "&#" + cc + ";";
+        } else {
+            result += str.charAt(i);
+        }
+        i++;
+    }
+    return result;
+};
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+Html4Entities.encodeNonUTF = function(str) {
+    return new Html4Entities().encodeNonUTF(str);
+};
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+Html4Entities.prototype.encodeNonASCII = function(str) {
+    if (!str || !str.length) {
+        return '';
+    }
+    var strLength = str.length;
+    var result = '';
+    var i = 0;
+    while (i < strLength) {
+        var c = str.charCodeAt(i);
+        if (c <= 255) {
+            result += str[i++];
+            continue;
+        }
+        result += '&#' + c + ';';
+        i++;
+    }
+    return result;
+};
+
+/**
+ * @param {String} str
+ * @returns {String}
+ */
+Html4Entities.encodeNonASCII = function(str) {
+    return new Html4Entities().encodeNonASCII(str);
+};
+
+module.exports = Html4Entities;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Based heavily on https://github.com/webpack/webpack/blob/
+ *  c0afdf9c6abc1dd70707c594e473802a566f7b6e/hot/only-dev-server.js
+ * Original copyright Tobias Koppers @sokra (MIT license)
+ */
+
+/* global window __webpack_hash__ */
+
+if (false) {
+  throw new Error("[HMR] Hot Module Replacement is disabled.");
+}
+
+var hmrDocsUrl = "https://webpack.js.org/concepts/hot-module-replacement/"; // eslint-disable-line max-len
+
+var lastHash;
+var failureStatuses = { abort: 1, fail: 1 };
+var applyOptions = { 				
+  ignoreUnaccepted: true,
+  ignoreDeclined: true,
+  ignoreErrored: true,
+  onUnaccepted: function(data) {
+    console.warn("Ignored an update to unaccepted module " + data.chain.join(" -> "));
+  },
+  onDeclined: function(data) {
+    console.warn("Ignored an update to declined module " + data.chain.join(" -> "));
+  },
+  onErrored: function(data) {
+    console.error(data.error);
+    console.warn("Ignored an error while updating module " + data.moduleId + " (" + data.type + ")");
+  } 
+}
+
+function upToDate(hash) {
+  if (hash) lastHash = hash;
+  return lastHash == __webpack_require__.h();
+}
+
+module.exports = function(hash, moduleMap, options) {
+  var reload = options.reload;
+  if (!upToDate(hash) && module.hot.status() == "idle") {
+    if (options.log) console.log("[HMR] Checking for updates on the server...");
+    check();
+  }
+
+  function check() {
+    var cb = function(err, updatedModules) {
+      if (err) return handleError(err);
+
+      if(!updatedModules) {
+        if (options.warn) {
+          console.warn("[HMR] Cannot find update (Full reload needed)");
+          console.warn("[HMR] (Probably because of restarting the server)");
+        }
+        performReload();
+        return null;
+      }
+
+      var applyCallback = function(applyErr, renewedModules) {
+        if (applyErr) return handleError(applyErr);
+
+        if (!upToDate()) check();
+
+        logUpdates(updatedModules, renewedModules);
+      };
+
+      var applyResult = module.hot.apply(applyOptions, applyCallback);
+      // webpack 2 promise
+      if (applyResult && applyResult.then) {
+        // HotModuleReplacement.runtime.js refers to the result as `outdatedModules`
+        applyResult.then(function(outdatedModules) {
+          applyCallback(null, outdatedModules);
+        });
+        applyResult.catch(applyCallback);
+      }
+
+    };
+
+    var result = module.hot.check(false, cb);
+    // webpack 2 promise
+    if (result && result.then) {
+        result.then(function(updatedModules) {
+            cb(null, updatedModules);
+        });
+        result.catch(cb);
+    }
+  }
+
+  function logUpdates(updatedModules, renewedModules) {
+    var unacceptedModules = updatedModules.filter(function(moduleId) {
+      return renewedModules && renewedModules.indexOf(moduleId) < 0;
+    });
+
+    if(unacceptedModules.length > 0) {
+      if (options.warn) {
+        console.warn(
+          "[HMR] The following modules couldn't be hot updated: " +
+          "(Full reload needed)\n" +
+          "This is usually because the modules which have changed " +
+          "(and their parents) do not know how to hot reload themselves. " +
+          "See " + hmrDocsUrl + " for more details."
+        );
+        unacceptedModules.forEach(function(moduleId) {
+          console.warn("[HMR]  - " + moduleMap[moduleId]);
+        });
+      }
+      performReload();
+      return;
+    }
+
+    if (options.log) {
+      if(!renewedModules || renewedModules.length === 0) {
+        console.log("[HMR] Nothing hot updated.");
+      } else {
+        console.log("[HMR] Updated modules:");
+        renewedModules.forEach(function(moduleId) {
+          console.log("[HMR]  - " + moduleMap[moduleId]);
+        });
+      }
+
+      if (upToDate()) {
+        console.log("[HMR] App is up to date.");
+      }
+    }
+  }
+
+  function handleError(err) {
+    if (module.hot.status() in failureStatuses) {
+      if (options.warn) {
+        console.warn("[HMR] Cannot check for update (Full reload needed)");
+        console.warn("[HMR] " + err.stack || err.message);
+      }
+      performReload();
+      return;
+    }
+    if (options.warn) {
+      console.warn("[HMR] Update check failed: " + err.stack || err.message);
+    }
+  }
+
+  function performReload() {
+    if (reload) {
+      if (options.warn) console.warn("[HMR] Reloading page");
+      window.location.reload();
+    }
+  }
+};
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var utils = __webpack_require__(0);
+var normalizeHeaderName = __webpack_require__(48);
+
+var DEFAULT_CONTENT_TYPE = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+};
+
+function setContentTypeIfUnset(headers, value) {
+  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+    headers['Content-Type'] = value;
+  }
+}
+
+function getDefaultAdapter() {
+  var adapter;
+  if (typeof XMLHttpRequest !== 'undefined') {
+    // For browsers use XHR adapter
+    adapter = __webpack_require__(27);
+  } else if (typeof process !== 'undefined') {
+    // For node use HTTP adapter
+    adapter = __webpack_require__(27);
+  }
+  return adapter;
+}
+
+var defaults = {
+  adapter: getDefaultAdapter(),
+
+  transformRequest: [function transformRequest(data, headers) {
+    normalizeHeaderName(headers, 'Content-Type');
+    if (utils.isFormData(data) ||
+      utils.isArrayBuffer(data) ||
+      utils.isBuffer(data) ||
+      utils.isStream(data) ||
+      utils.isFile(data) ||
+      utils.isBlob(data)
+    ) {
+      return data;
+    }
+    if (utils.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils.isURLSearchParams(data)) {
+      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+      return data.toString();
+    }
+    if (utils.isObject(data)) {
+      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+      return JSON.stringify(data);
+    }
+    return data;
+  }],
+
+  transformResponse: [function transformResponse(data) {
+    /*eslint no-param-reassign:0*/
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (e) { /* Ignore */ }
+    }
+    return data;
+  }],
+
+  /**
+   * A timeout in milliseconds to abort a request. If set to 0 (default) a
+   * timeout is not created.
+   */
+  timeout: 0,
+
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+
+  maxContentLength: -1,
+
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  }
+};
+
+defaults.headers = {
+  common: {
+    'Accept': 'application/json, text/plain, */*'
+  }
+};
+
+utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+  defaults.headers[method] = {};
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+});
+
+module.exports = defaults;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ }),
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_template_id_4f65cd9c___ = __webpack_require__(66);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "render", function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_template_id_4f65cd9c___["a"]; });
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_template_id_4f65cd9c___["b"]; });
+
+
+/***/ }),
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9591,7 +11018,7 @@ function normalizeComponent (
 
 
 /***/ }),
-/* 6 */
+/* 21 */
 /***/ (function(module, exports) {
 
 var Vue // late bind
@@ -9837,1439 +11264,12 @@ exports.reload = tryWrap(function (id, options) {
 
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/* WEBPACK VAR INJECTION */(function(__resourceQuery, module) {/*eslint-env browser*/
-/*global __resourceQuery __webpack_public_path__*/
-
-var options = {
-  path: "/__webpack_hmr",
-  timeout: 20 * 1000,
-  overlay: true,
-  reload: false,
-  log: true,
-  warn: true,
-  name: '',
-  autoConnect: true,
-  overlayStyles: {},
-  overlayWarnings: false,
-  ansiColors: {}
-};
-if (true) {
-  var querystring = __webpack_require__(9);
-  var overrides = querystring.parse(__resourceQuery.slice(1));
-  setOverrides(overrides);
-}
-
-if (typeof window === 'undefined') {
-  // do nothing
-} else if (typeof window.EventSource === 'undefined') {
-  console.warn(
-    "webpack-hot-middleware's client requires EventSource to work. " +
-    "You should include a polyfill if you want to support this browser: " +
-    "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events#Tools"
-  );
-} else {
-  if (options.autoConnect) {
-    connect();
-  }
-}
-
-/* istanbul ignore next */
-function setOptionsAndConnect(overrides) {
-  setOverrides(overrides);
-  connect();
-}
-
-function setOverrides(overrides) {
-  if (overrides.autoConnect) options.autoConnect = overrides.autoConnect == 'true';
-  if (overrides.path) options.path = overrides.path;
-  if (overrides.timeout) options.timeout = overrides.timeout;
-  if (overrides.overlay) options.overlay = overrides.overlay !== 'false';
-  if (overrides.reload) options.reload = overrides.reload !== 'false';
-  if (overrides.noInfo && overrides.noInfo !== 'false') {
-    options.log = false;
-  }
-  if (overrides.name) {
-    options.name = overrides.name;
-  }
-  if (overrides.quiet && overrides.quiet !== 'false') {
-    options.log = false;
-    options.warn = false;
-  }
-
-  if (overrides.dynamicPublicPath) {
-    options.path = __webpack_require__.p + options.path;
-  }
-
-  if (overrides.ansiColors) options.ansiColors = JSON.parse(overrides.ansiColors);
-  if (overrides.overlayStyles) options.overlayStyles = JSON.parse(overrides.overlayStyles);
-
-  if (overrides.overlayWarnings) {
-    options.overlayWarnings = overrides.overlayWarnings == 'true';
-  }
-}
-
-function EventSourceWrapper() {
-  var source;
-  var lastActivity = new Date();
-  var listeners = [];
-
-  init();
-  var timer = setInterval(function() {
-    if ((new Date() - lastActivity) > options.timeout) {
-      handleDisconnect();
-    }
-  }, options.timeout / 2);
-
-  function init() {
-    source = new window.EventSource(options.path);
-    source.onopen = handleOnline;
-    source.onerror = handleDisconnect;
-    source.onmessage = handleMessage;
-  }
-
-  function handleOnline() {
-    if (options.log) console.log("[HMR] connected");
-    lastActivity = new Date();
-  }
-
-  function handleMessage(event) {
-    lastActivity = new Date();
-    for (var i = 0; i < listeners.length; i++) {
-      listeners[i](event);
-    }
-  }
-
-  function handleDisconnect() {
-    clearInterval(timer);
-    source.close();
-    setTimeout(init, options.timeout);
-  }
-
-  return {
-    addMessageListener: function(fn) {
-      listeners.push(fn);
-    }
-  };
-}
-
-function getEventSourceWrapper() {
-  if (!window.__whmEventSourceWrapper) {
-    window.__whmEventSourceWrapper = {};
-  }
-  if (!window.__whmEventSourceWrapper[options.path]) {
-    // cache the wrapper for other entries loaded on
-    // the same page with the same options.path
-    window.__whmEventSourceWrapper[options.path] = EventSourceWrapper();
-  }
-  return window.__whmEventSourceWrapper[options.path];
-}
-
-function connect() {
-  getEventSourceWrapper().addMessageListener(handleMessage);
-
-  function handleMessage(event) {
-    if (event.data == "\uD83D\uDC93") {
-      return;
-    }
-    try {
-      processMessage(JSON.parse(event.data));
-    } catch (ex) {
-      if (options.warn) {
-        console.warn("Invalid HMR message: " + event.data + "\n" + ex);
-      }
-    }
-  }
-}
-
-// the reporter needs to be a singleton on the page
-// in case the client is being used by multiple bundles
-// we only want to report once.
-// all the errors will go to all clients
-var singletonKey = '__webpack_hot_middleware_reporter__';
-var reporter;
-if (typeof window !== 'undefined') {
-  if (!window[singletonKey]) {
-    window[singletonKey] = createReporter();
-  }
-  reporter = window[singletonKey];
-}
-
-function createReporter() {
-  var strip = __webpack_require__(12);
-
-  var overlay;
-  if (typeof document !== 'undefined' && options.overlay) {
-    overlay = __webpack_require__(14)({
-      ansiColors: options.ansiColors,
-      overlayStyles: options.overlayStyles
-    });
-  }
-
-  var styles = {
-    errors: "color: #ff0000;",
-    warnings: "color: #999933;"
-  };
-  var previousProblems = null;
-  function log(type, obj) {
-    var newProblems = obj[type].map(function(msg) { return strip(msg); }).join('\n');
-    if (previousProblems == newProblems) {
-      return;
-    } else {
-      previousProblems = newProblems;
-    }
-
-    var style = styles[type];
-    var name = obj.name ? "'" + obj.name + "' " : "";
-    var title = "[HMR] bundle " + name + "has " + obj[type].length + " " + type;
-    // NOTE: console.warn or console.error will print the stack trace
-    // which isn't helpful here, so using console.log to escape it.
-    if (console.group && console.groupEnd) {
-      console.group("%c" + title, style);
-      console.log("%c" + newProblems, style);
-      console.groupEnd();
-    } else {
-      console.log(
-        "%c" + title + "\n\t%c" + newProblems.replace(/\n/g, "\n\t"),
-        style + "font-weight: bold;",
-        style + "font-weight: normal;"
-      );
-    }
-  }
-
-  return {
-    cleanProblemsCache: function () {
-      previousProblems = null;
-    },
-    problems: function(type, obj) {
-      if (options.warn) {
-        log(type, obj);
-      }
-      if (overlay) {
-        if (options.overlayWarnings || type === 'errors') {
-          overlay.showProblems(type, obj[type]);
-          return false;
-        }
-        overlay.clear();
-      }
-      return true;
-    },
-    success: function() {
-      if (overlay) overlay.clear();
-    },
-    useCustomOverlay: function(customOverlay) {
-      overlay = customOverlay;
-    }
-  };
-}
-
-var processUpdate = __webpack_require__(19);
-
-var customHandler;
-var subscribeAllHandler;
-function processMessage(obj) {
-  switch(obj.action) {
-    case "building":
-      if (options.log) {
-        console.log(
-          "[HMR] bundle " + (obj.name ? "'" + obj.name + "' " : "") +
-          "rebuilding"
-        );
-      }
-      break;
-    case "built":
-      if (options.log) {
-        console.log(
-          "[HMR] bundle " + (obj.name ? "'" + obj.name + "' " : "") +
-          "rebuilt in " + obj.time + "ms"
-        );
-      }
-      // fall through
-    case "sync":
-      if (obj.name && options.name && obj.name !== options.name) {
-        return;
-      }
-      var applyUpdate = true;
-      if (obj.errors.length > 0) {
-        if (reporter) reporter.problems('errors', obj);
-        applyUpdate = false;
-      } else if (obj.warnings.length > 0) {
-        if (reporter) {
-          var overlayShown = reporter.problems('warnings', obj);
-          applyUpdate = overlayShown;
-        }
-      } else {
-        if (reporter) {
-          reporter.cleanProblemsCache();
-          reporter.success();
-        }
-      }
-      if (applyUpdate) {
-        processUpdate(obj.hash, obj.modules, options);
-      }
-      break;
-    default:
-      if (customHandler) {
-        customHandler(obj);
-      }
-  }
-
-  if (subscribeAllHandler) {
-    subscribeAllHandler(obj);
-  }
-}
-
-if (module) {
-  module.exports = {
-    subscribeAll: function subscribeAll(handler) {
-      subscribeAllHandler = handler;
-    },
-    subscribe: function subscribe(handler) {
-      customHandler = handler;
-    },
-    useCustomOverlay: function useCustomOverlay(customOverlay) {
-      if (reporter) reporter.useCustomOverlay(customOverlay);
-    },
-    setOptionsAndConnect: setOptionsAndConnect
-  };
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, "?path=__webpack_hmr&dynamicPublicPath=true", __webpack_require__(8)(module)))
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-module.exports = function(module) {
-	if(!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if(!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.decode = exports.parse = __webpack_require__(10);
-exports.encode = exports.stringify = __webpack_require__(11);
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
-// If obj.hasOwnProperty has been overridden, then calling
-// obj.hasOwnProperty(prop) will break.
-// See: https://github.com/joyent/node/issues/1707
-function hasOwnProperty(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-
-module.exports = function(qs, sep, eq, options) {
-  sep = sep || '&';
-  eq = eq || '=';
-  var obj = {};
-
-  if (typeof qs !== 'string' || qs.length === 0) {
-    return obj;
-  }
-
-  var regexp = /\+/g;
-  qs = qs.split(sep);
-
-  var maxKeys = 1000;
-  if (options && typeof options.maxKeys === 'number') {
-    maxKeys = options.maxKeys;
-  }
-
-  var len = qs.length;
-  // maxKeys <= 0 means that we should not limit keys count
-  if (maxKeys > 0 && len > maxKeys) {
-    len = maxKeys;
-  }
-
-  for (var i = 0; i < len; ++i) {
-    var x = qs[i].replace(regexp, '%20'),
-        idx = x.indexOf(eq),
-        kstr, vstr, k, v;
-
-    if (idx >= 0) {
-      kstr = x.substr(0, idx);
-      vstr = x.substr(idx + 1);
-    } else {
-      kstr = x;
-      vstr = '';
-    }
-
-    k = decodeURIComponent(kstr);
-    v = decodeURIComponent(vstr);
-
-    if (!hasOwnProperty(obj, k)) {
-      obj[k] = v;
-    } else if (isArray(obj[k])) {
-      obj[k].push(v);
-    } else {
-      obj[k] = [obj[k], v];
-    }
-  }
-
-  return obj;
-};
-
-var isArray = Array.isArray || function (xs) {
-  return Object.prototype.toString.call(xs) === '[object Array]';
-};
-
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
-var stringifyPrimitive = function(v) {
-  switch (typeof v) {
-    case 'string':
-      return v;
-
-    case 'boolean':
-      return v ? 'true' : 'false';
-
-    case 'number':
-      return isFinite(v) ? v : '';
-
-    default:
-      return '';
-  }
-};
-
-module.exports = function(obj, sep, eq, name) {
-  sep = sep || '&';
-  eq = eq || '=';
-  if (obj === null) {
-    obj = undefined;
-  }
-
-  if (typeof obj === 'object') {
-    return map(objectKeys(obj), function(k) {
-      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
-      if (isArray(obj[k])) {
-        return map(obj[k], function(v) {
-          return ks + encodeURIComponent(stringifyPrimitive(v));
-        }).join(sep);
-      } else {
-        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
-      }
-    }).join(sep);
-
-  }
-
-  if (!name) return '';
-  return encodeURIComponent(stringifyPrimitive(name)) + eq +
-         encodeURIComponent(stringifyPrimitive(obj));
-};
-
-var isArray = Array.isArray || function (xs) {
-  return Object.prototype.toString.call(xs) === '[object Array]';
-};
-
-function map (xs, f) {
-  if (xs.map) return xs.map(f);
-  var res = [];
-  for (var i = 0; i < xs.length; i++) {
-    res.push(f(xs[i], i));
-  }
-  return res;
-}
-
-var objectKeys = Object.keys || function (obj) {
-  var res = [];
-  for (var key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) res.push(key);
-  }
-  return res;
-};
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var ansiRegex = __webpack_require__(13)();
-
-module.exports = function (str) {
-	return typeof str === 'string' ? str.replace(ansiRegex, '') : str;
-};
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-module.exports = function () {
-	return /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-PRZcf-nqry=><]/g;
-};
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/*eslint-env browser*/
-
-var clientOverlay = document.createElement('div');
-clientOverlay.id = 'webpack-hot-middleware-clientOverlay';
-var styles = {
-  background: 'rgba(0,0,0,0.85)',
-  color: '#E8E8E8',
-  lineHeight: '1.2',
-  whiteSpace: 'pre',
-  fontFamily: 'Menlo, Consolas, monospace',
-  fontSize: '13px',
-  position: 'fixed',
-  zIndex: 9999,
-  padding: '10px',
-  left: 0,
-  right: 0,
-  top: 0,
-  bottom: 0,
-  overflow: 'auto',
-  dir: 'ltr',
-  textAlign: 'left'
-};
-
-var ansiHTML = __webpack_require__(15);
-var colors = {
-  reset: ['transparent', 'transparent'],
-  black: '181818',
-  red: 'E36049',
-  green: 'B3CB74',
-  yellow: 'FFD080',
-  blue: '7CAFC2',
-  magenta: '7FACCA',
-  cyan: 'C3C2EF',
-  lightgrey: 'EBE7E3',
-  darkgrey: '6D7891'
-};
-
-var Entities = __webpack_require__(16).AllHtmlEntities;
-var entities = new Entities();
-
-function showProblems(type, lines) {
-  clientOverlay.innerHTML = '';
-  lines.forEach(function(msg) {
-    msg = ansiHTML(entities.encode(msg));
-    var div = document.createElement('div');
-    div.style.marginBottom = '26px';
-    div.innerHTML = problemType(type) + ' in ' + msg;
-    clientOverlay.appendChild(div);
-  });
-  if (document.body) {
-    document.body.appendChild(clientOverlay);
-  }
-}
-
-function clear() {
-  if (document.body && clientOverlay.parentNode) {
-    document.body.removeChild(clientOverlay);
-  }
-}
-
-function problemType (type) {
-  var problemColors = {
-    errors: colors.red,
-    warnings: colors.yellow
-  };
-  var color = problemColors[type] || colors.red;
-  return (
-    '<span style="background-color:#' + color + '; color:#fff; padding:2px 4px; border-radius: 2px">' +
-      type.slice(0, -1).toUpperCase() +
-    '</span>'
-  );
-}
-
-module.exports = function(options) {
-  for (var color in options.overlayColors) {
-    if (color in colors) {
-      colors[color] = options.overlayColors[color];
-    }
-    ansiHTML.setColors(colors);
-  }
-
-  for (var style in options.overlayStyles) {
-    styles[style] = options.overlayStyles[style];
-  }
-
-  for (var key in styles) {
-    clientOverlay.style[key] = styles[key];
-  }
-
-  return {
-    showProblems: showProblems,
-    clear: clear
-  }
-};
-
-module.exports.clear = clear;
-module.exports.showProblems = showProblems;
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = ansiHTML
-
-// Reference to https://github.com/sindresorhus/ansi-regex
-var _regANSI = /(?:(?:\u001b\[)|\u009b)(?:(?:[0-9]{1,3})?(?:(?:;[0-9]{0,3})*)?[A-M|f-m])|\u001b[A-M]/
-
-var _defColors = {
-  reset: ['fff', '000'], // [FOREGROUD_COLOR, BACKGROUND_COLOR]
-  black: '000',
-  red: 'ff0000',
-  green: '209805',
-  yellow: 'e8bf03',
-  blue: '0000ff',
-  magenta: 'ff00ff',
-  cyan: '00ffee',
-  lightgrey: 'f0f0f0',
-  darkgrey: '888'
-}
-var _styles = {
-  30: 'black',
-  31: 'red',
-  32: 'green',
-  33: 'yellow',
-  34: 'blue',
-  35: 'magenta',
-  36: 'cyan',
-  37: 'lightgrey'
-}
-var _openTags = {
-  '1': 'font-weight:bold', // bold
-  '2': 'opacity:0.5', // dim
-  '3': '<i>', // italic
-  '4': '<u>', // underscore
-  '8': 'display:none', // hidden
-  '9': '<del>' // delete
-}
-var _closeTags = {
-  '23': '</i>', // reset italic
-  '24': '</u>', // reset underscore
-  '29': '</del>' // reset delete
-}
-
-;[0, 21, 22, 27, 28, 39, 49].forEach(function (n) {
-  _closeTags[n] = '</span>'
-})
-
-/**
- * Converts text with ANSI color codes to HTML markup.
- * @param {String} text
- * @returns {*}
- */
-function ansiHTML (text) {
-  // Returns the text if the string has no ANSI escape code.
-  if (!_regANSI.test(text)) {
-    return text
-  }
-
-  // Cache opened sequence.
-  var ansiCodes = []
-  // Replace with markup.
-  var ret = text.replace(/\033\[(\d+)*m/g, function (match, seq) {
-    var ot = _openTags[seq]
-    if (ot) {
-      // If current sequence has been opened, close it.
-      if (!!~ansiCodes.indexOf(seq)) { // eslint-disable-line no-extra-boolean-cast
-        ansiCodes.pop()
-        return '</span>'
-      }
-      // Open tag.
-      ansiCodes.push(seq)
-      return ot[0] === '<' ? ot : '<span style="' + ot + ';">'
-    }
-
-    var ct = _closeTags[seq]
-    if (ct) {
-      // Pop sequence
-      ansiCodes.pop()
-      return ct
-    }
-    return ''
-  })
-
-  // Make sure tags are closed.
-  var l = ansiCodes.length
-  ;(l > 0) && (ret += Array(l + 1).join('</span>'))
-
-  return ret
-}
-
-/**
- * Customize colors.
- * @param {Object} colors reference to _defColors
- */
-ansiHTML.setColors = function (colors) {
-  if (typeof colors !== 'object') {
-    throw new Error('`colors` parameter must be an Object.')
-  }
-
-  var _finalColors = {}
-  for (var key in _defColors) {
-    var hex = colors.hasOwnProperty(key) ? colors[key] : null
-    if (!hex) {
-      _finalColors[key] = _defColors[key]
-      continue
-    }
-    if ('reset' === key) {
-      if (typeof hex === 'string') {
-        hex = [hex]
-      }
-      if (!Array.isArray(hex) || hex.length === 0 || hex.some(function (h) {
-        return typeof h !== 'string'
-      })) {
-        throw new Error('The value of `' + key + '` property must be an Array and each item could only be a hex string, e.g.: FF0000')
-      }
-      var defHexColor = _defColors[key]
-      if (!hex[0]) {
-        hex[0] = defHexColor[0]
-      }
-      if (hex.length === 1 || !hex[1]) {
-        hex = [hex[0]]
-        hex.push(defHexColor[1])
-      }
-
-      hex = hex.slice(0, 2)
-    } else if (typeof hex !== 'string') {
-      throw new Error('The value of `' + key + '` property must be a hex string, e.g.: FF0000')
-    }
-    _finalColors[key] = hex
-  }
-  _setTags(_finalColors)
-}
-
-/**
- * Reset colors.
- */
-ansiHTML.reset = function () {
-  _setTags(_defColors)
-}
-
-/**
- * Expose tags, including open and close.
- * @type {Object}
- */
-ansiHTML.tags = {}
-
-if (Object.defineProperty) {
-  Object.defineProperty(ansiHTML.tags, 'open', {
-    get: function () { return _openTags }
-  })
-  Object.defineProperty(ansiHTML.tags, 'close', {
-    get: function () { return _closeTags }
-  })
-} else {
-  ansiHTML.tags.open = _openTags
-  ansiHTML.tags.close = _closeTags
-}
-
-function _setTags (colors) {
-  // reset all
-  _openTags['0'] = 'font-weight:normal;opacity:1;color:#' + colors.reset[0] + ';background:#' + colors.reset[1]
-  // inverse
-  _openTags['7'] = 'color:#' + colors.reset[1] + ';background:#' + colors.reset[0]
-  // dark grey
-  _openTags['90'] = 'color:#' + colors.darkgrey
-
-  for (var code in _styles) {
-    var color = _styles[code]
-    var oriColor = colors[color] || '000'
-    _openTags[code] = 'color:#' + oriColor
-    code = parseInt(code)
-    _openTags[(code + 10).toString()] = 'background:#' + oriColor
-  }
-}
-
-ansiHTML.reset()
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = {
-  XmlEntities: __webpack_require__(17),
-  Html4Entities: __webpack_require__(18),
-  Html5Entities: __webpack_require__(2),
-  AllHtmlEntities: __webpack_require__(2)
-};
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
-var ALPHA_INDEX = {
-    '&lt': '<',
-    '&gt': '>',
-    '&quot': '"',
-    '&apos': '\'',
-    '&amp': '&',
-    '&lt;': '<',
-    '&gt;': '>',
-    '&quot;': '"',
-    '&apos;': '\'',
-    '&amp;': '&'
-};
-
-var CHAR_INDEX = {
-    60: 'lt',
-    62: 'gt',
-    34: 'quot',
-    39: 'apos',
-    38: 'amp'
-};
-
-var CHAR_S_INDEX = {
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    '\'': '&apos;',
-    '&': '&amp;'
-};
-
-/**
- * @constructor
- */
-function XmlEntities() {}
-
-/**
- * @param {String} str
- * @returns {String}
- */
-XmlEntities.prototype.encode = function(str) {
-    if (!str || !str.length) {
-        return '';
-    }
-    return str.replace(/<|>|"|'|&/g, function(s) {
-        return CHAR_S_INDEX[s];
-    });
-};
-
-/**
- * @param {String} str
- * @returns {String}
- */
- XmlEntities.encode = function(str) {
-    return new XmlEntities().encode(str);
- };
-
-/**
- * @param {String} str
- * @returns {String}
- */
-XmlEntities.prototype.decode = function(str) {
-    if (!str || !str.length) {
-        return '';
-    }
-    return str.replace(/&#?[0-9a-zA-Z]+;?/g, function(s) {
-        if (s.charAt(1) === '#') {
-            var code = s.charAt(2).toLowerCase() === 'x' ?
-                parseInt(s.substr(3), 16) :
-                parseInt(s.substr(2));
-
-            if (isNaN(code) || code < -32768 || code > 65535) {
-                return '';
-            }
-            return String.fromCharCode(code);
-        }
-        return ALPHA_INDEX[s] || s;
-    });
-};
-
-/**
- * @param {String} str
- * @returns {String}
- */
- XmlEntities.decode = function(str) {
-    return new XmlEntities().decode(str);
- };
-
-/**
- * @param {String} str
- * @returns {String}
- */
-XmlEntities.prototype.encodeNonUTF = function(str) {
-    if (!str || !str.length) {
-        return '';
-    }
-    var strLength = str.length;
-    var result = '';
-    var i = 0;
-    while (i < strLength) {
-        var c = str.charCodeAt(i);
-        var alpha = CHAR_INDEX[c];
-        if (alpha) {
-            result += "&" + alpha + ";";
-            i++;
-            continue;
-        }
-        if (c < 32 || c > 126) {
-            result += '&#' + c + ';';
-        } else {
-            result += str.charAt(i);
-        }
-        i++;
-    }
-    return result;
-};
-
-/**
- * @param {String} str
- * @returns {String}
- */
- XmlEntities.encodeNonUTF = function(str) {
-    return new XmlEntities().encodeNonUTF(str);
- };
-
-/**
- * @param {String} str
- * @returns {String}
- */
-XmlEntities.prototype.encodeNonASCII = function(str) {
-    if (!str || !str.length) {
-        return '';
-    }
-    var strLenght = str.length;
-    var result = '';
-    var i = 0;
-    while (i < strLenght) {
-        var c = str.charCodeAt(i);
-        if (c <= 255) {
-            result += str[i++];
-            continue;
-        }
-        result += '&#' + c + ';';
-        i++;
-    }
-    return result;
-};
-
-/**
- * @param {String} str
- * @returns {String}
- */
- XmlEntities.encodeNonASCII = function(str) {
-    return new XmlEntities().encodeNonASCII(str);
- };
-
-module.exports = XmlEntities;
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports) {
-
-var HTML_ALPHA = ['apos', 'nbsp', 'iexcl', 'cent', 'pound', 'curren', 'yen', 'brvbar', 'sect', 'uml', 'copy', 'ordf', 'laquo', 'not', 'shy', 'reg', 'macr', 'deg', 'plusmn', 'sup2', 'sup3', 'acute', 'micro', 'para', 'middot', 'cedil', 'sup1', 'ordm', 'raquo', 'frac14', 'frac12', 'frac34', 'iquest', 'Agrave', 'Aacute', 'Acirc', 'Atilde', 'Auml', 'Aring', 'Aelig', 'Ccedil', 'Egrave', 'Eacute', 'Ecirc', 'Euml', 'Igrave', 'Iacute', 'Icirc', 'Iuml', 'ETH', 'Ntilde', 'Ograve', 'Oacute', 'Ocirc', 'Otilde', 'Ouml', 'times', 'Oslash', 'Ugrave', 'Uacute', 'Ucirc', 'Uuml', 'Yacute', 'THORN', 'szlig', 'agrave', 'aacute', 'acirc', 'atilde', 'auml', 'aring', 'aelig', 'ccedil', 'egrave', 'eacute', 'ecirc', 'euml', 'igrave', 'iacute', 'icirc', 'iuml', 'eth', 'ntilde', 'ograve', 'oacute', 'ocirc', 'otilde', 'ouml', 'divide', 'oslash', 'ugrave', 'uacute', 'ucirc', 'uuml', 'yacute', 'thorn', 'yuml', 'quot', 'amp', 'lt', 'gt', 'OElig', 'oelig', 'Scaron', 'scaron', 'Yuml', 'circ', 'tilde', 'ensp', 'emsp', 'thinsp', 'zwnj', 'zwj', 'lrm', 'rlm', 'ndash', 'mdash', 'lsquo', 'rsquo', 'sbquo', 'ldquo', 'rdquo', 'bdquo', 'dagger', 'Dagger', 'permil', 'lsaquo', 'rsaquo', 'euro', 'fnof', 'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa', 'Lambda', 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega', 'alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigmaf', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega', 'thetasym', 'upsih', 'piv', 'bull', 'hellip', 'prime', 'Prime', 'oline', 'frasl', 'weierp', 'image', 'real', 'trade', 'alefsym', 'larr', 'uarr', 'rarr', 'darr', 'harr', 'crarr', 'lArr', 'uArr', 'rArr', 'dArr', 'hArr', 'forall', 'part', 'exist', 'empty', 'nabla', 'isin', 'notin', 'ni', 'prod', 'sum', 'minus', 'lowast', 'radic', 'prop', 'infin', 'ang', 'and', 'or', 'cap', 'cup', 'int', 'there4', 'sim', 'cong', 'asymp', 'ne', 'equiv', 'le', 'ge', 'sub', 'sup', 'nsub', 'sube', 'supe', 'oplus', 'otimes', 'perp', 'sdot', 'lceil', 'rceil', 'lfloor', 'rfloor', 'lang', 'rang', 'loz', 'spades', 'clubs', 'hearts', 'diams'];
-var HTML_CODES = [39, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 34, 38, 60, 62, 338, 339, 352, 353, 376, 710, 732, 8194, 8195, 8201, 8204, 8205, 8206, 8207, 8211, 8212, 8216, 8217, 8218, 8220, 8221, 8222, 8224, 8225, 8240, 8249, 8250, 8364, 402, 913, 914, 915, 916, 917, 918, 919, 920, 921, 922, 923, 924, 925, 926, 927, 928, 929, 931, 932, 933, 934, 935, 936, 937, 945, 946, 947, 948, 949, 950, 951, 952, 953, 954, 955, 956, 957, 958, 959, 960, 961, 962, 963, 964, 965, 966, 967, 968, 969, 977, 978, 982, 8226, 8230, 8242, 8243, 8254, 8260, 8472, 8465, 8476, 8482, 8501, 8592, 8593, 8594, 8595, 8596, 8629, 8656, 8657, 8658, 8659, 8660, 8704, 8706, 8707, 8709, 8711, 8712, 8713, 8715, 8719, 8721, 8722, 8727, 8730, 8733, 8734, 8736, 8743, 8744, 8745, 8746, 8747, 8756, 8764, 8773, 8776, 8800, 8801, 8804, 8805, 8834, 8835, 8836, 8838, 8839, 8853, 8855, 8869, 8901, 8968, 8969, 8970, 8971, 9001, 9002, 9674, 9824, 9827, 9829, 9830];
-
-var alphaIndex = {};
-var numIndex = {};
-
-var i = 0;
-var length = HTML_ALPHA.length;
-while (i < length) {
-    var a = HTML_ALPHA[i];
-    var c = HTML_CODES[i];
-    alphaIndex[a] = String.fromCharCode(c);
-    numIndex[c] = a;
-    i++;
-}
-
-/**
- * @constructor
- */
-function Html4Entities() {}
-
-/**
- * @param {String} str
- * @returns {String}
- */
-Html4Entities.prototype.decode = function(str) {
-    if (!str || !str.length) {
-        return '';
-    }
-    return str.replace(/&(#?[\w\d]+);?/g, function(s, entity) {
-        var chr;
-        if (entity.charAt(0) === "#") {
-            var code = entity.charAt(1).toLowerCase() === 'x' ?
-                parseInt(entity.substr(2), 16) :
-                parseInt(entity.substr(1));
-
-            if (!(isNaN(code) || code < -32768 || code > 65535)) {
-                chr = String.fromCharCode(code);
-            }
-        } else {
-            chr = alphaIndex[entity];
-        }
-        return chr || s;
-    });
-};
-
-/**
- * @param {String} str
- * @returns {String}
- */
-Html4Entities.decode = function(str) {
-    return new Html4Entities().decode(str);
-};
-
-/**
- * @param {String} str
- * @returns {String}
- */
-Html4Entities.prototype.encode = function(str) {
-    if (!str || !str.length) {
-        return '';
-    }
-    var strLength = str.length;
-    var result = '';
-    var i = 0;
-    while (i < strLength) {
-        var alpha = numIndex[str.charCodeAt(i)];
-        result += alpha ? "&" + alpha + ";" : str.charAt(i);
-        i++;
-    }
-    return result;
-};
-
-/**
- * @param {String} str
- * @returns {String}
- */
-Html4Entities.encode = function(str) {
-    return new Html4Entities().encode(str);
-};
-
-/**
- * @param {String} str
- * @returns {String}
- */
-Html4Entities.prototype.encodeNonUTF = function(str) {
-    if (!str || !str.length) {
-        return '';
-    }
-    var strLength = str.length;
-    var result = '';
-    var i = 0;
-    while (i < strLength) {
-        var cc = str.charCodeAt(i);
-        var alpha = numIndex[cc];
-        if (alpha) {
-            result += "&" + alpha + ";";
-        } else if (cc < 32 || cc > 126) {
-            result += "&#" + cc + ";";
-        } else {
-            result += str.charAt(i);
-        }
-        i++;
-    }
-    return result;
-};
-
-/**
- * @param {String} str
- * @returns {String}
- */
-Html4Entities.encodeNonUTF = function(str) {
-    return new Html4Entities().encodeNonUTF(str);
-};
-
-/**
- * @param {String} str
- * @returns {String}
- */
-Html4Entities.prototype.encodeNonASCII = function(str) {
-    if (!str || !str.length) {
-        return '';
-    }
-    var strLength = str.length;
-    var result = '';
-    var i = 0;
-    while (i < strLength) {
-        var c = str.charCodeAt(i);
-        if (c <= 255) {
-            result += str[i++];
-            continue;
-        }
-        result += '&#' + c + ';';
-        i++;
-    }
-    return result;
-};
-
-/**
- * @param {String} str
- * @returns {String}
- */
-Html4Entities.encodeNonASCII = function(str) {
-    return new Html4Entities().encodeNonASCII(str);
-};
-
-module.exports = Html4Entities;
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Based heavily on https://github.com/webpack/webpack/blob/
- *  c0afdf9c6abc1dd70707c594e473802a566f7b6e/hot/only-dev-server.js
- * Original copyright Tobias Koppers @sokra (MIT license)
- */
-
-/* global window __webpack_hash__ */
-
-if (false) {
-  throw new Error("[HMR] Hot Module Replacement is disabled.");
-}
-
-var hmrDocsUrl = "https://webpack.js.org/concepts/hot-module-replacement/"; // eslint-disable-line max-len
-
-var lastHash;
-var failureStatuses = { abort: 1, fail: 1 };
-var applyOptions = { 				
-  ignoreUnaccepted: true,
-  ignoreDeclined: true,
-  ignoreErrored: true,
-  onUnaccepted: function(data) {
-    console.warn("Ignored an update to unaccepted module " + data.chain.join(" -> "));
-  },
-  onDeclined: function(data) {
-    console.warn("Ignored an update to declined module " + data.chain.join(" -> "));
-  },
-  onErrored: function(data) {
-    console.error(data.error);
-    console.warn("Ignored an error while updating module " + data.moduleId + " (" + data.type + ")");
-  } 
-}
-
-function upToDate(hash) {
-  if (hash) lastHash = hash;
-  return lastHash == __webpack_require__.h();
-}
-
-module.exports = function(hash, moduleMap, options) {
-  var reload = options.reload;
-  if (!upToDate(hash) && module.hot.status() == "idle") {
-    if (options.log) console.log("[HMR] Checking for updates on the server...");
-    check();
-  }
-
-  function check() {
-    var cb = function(err, updatedModules) {
-      if (err) return handleError(err);
-
-      if(!updatedModules) {
-        if (options.warn) {
-          console.warn("[HMR] Cannot find update (Full reload needed)");
-          console.warn("[HMR] (Probably because of restarting the server)");
-        }
-        performReload();
-        return null;
-      }
-
-      var applyCallback = function(applyErr, renewedModules) {
-        if (applyErr) return handleError(applyErr);
-
-        if (!upToDate()) check();
-
-        logUpdates(updatedModules, renewedModules);
-      };
-
-      var applyResult = module.hot.apply(applyOptions, applyCallback);
-      // webpack 2 promise
-      if (applyResult && applyResult.then) {
-        // HotModuleReplacement.runtime.js refers to the result as `outdatedModules`
-        applyResult.then(function(outdatedModules) {
-          applyCallback(null, outdatedModules);
-        });
-        applyResult.catch(applyCallback);
-      }
-
-    };
-
-    var result = module.hot.check(false, cb);
-    // webpack 2 promise
-    if (result && result.then) {
-        result.then(function(updatedModules) {
-            cb(null, updatedModules);
-        });
-        result.catch(cb);
-    }
-  }
-
-  function logUpdates(updatedModules, renewedModules) {
-    var unacceptedModules = updatedModules.filter(function(moduleId) {
-      return renewedModules && renewedModules.indexOf(moduleId) < 0;
-    });
-
-    if(unacceptedModules.length > 0) {
-      if (options.warn) {
-        console.warn(
-          "[HMR] The following modules couldn't be hot updated: " +
-          "(Full reload needed)\n" +
-          "This is usually because the modules which have changed " +
-          "(and their parents) do not know how to hot reload themselves. " +
-          "See " + hmrDocsUrl + " for more details."
-        );
-        unacceptedModules.forEach(function(moduleId) {
-          console.warn("[HMR]  - " + moduleMap[moduleId]);
-        });
-      }
-      performReload();
-      return;
-    }
-
-    if (options.log) {
-      if(!renewedModules || renewedModules.length === 0) {
-        console.log("[HMR] Nothing hot updated.");
-      } else {
-        console.log("[HMR] Updated modules:");
-        renewedModules.forEach(function(moduleId) {
-          console.log("[HMR]  - " + moduleMap[moduleId]);
-        });
-      }
-
-      if (upToDate()) {
-        console.log("[HMR] App is up to date.");
-      }
-    }
-  }
-
-  function handleError(err) {
-    if (module.hot.status() in failureStatuses) {
-      if (options.warn) {
-        console.warn("[HMR] Cannot check for update (Full reload needed)");
-        console.warn("[HMR] " + err.stack || err.message);
-      }
-      performReload();
-      return;
-    }
-    if (options.warn) {
-      console.warn("[HMR] Update check failed: " + err.stack || err.message);
-    }
-  }
-
-  function performReload() {
-    if (reload) {
-      if (options.warn) console.warn("[HMR] Reloading page");
-      window.location.reload();
-    }
-  }
-};
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(51);
-
-var DEFAULT_CONTENT_TYPE = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-};
-
-function setContentTypeIfUnset(headers, value) {
-  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
-    headers['Content-Type'] = value;
-  }
-}
-
-function getDefaultAdapter() {
-  var adapter;
-  if (typeof XMLHttpRequest !== 'undefined') {
-    // For browsers use XHR adapter
-    adapter = __webpack_require__(28);
-  } else if (typeof process !== 'undefined') {
-    // For node use HTTP adapter
-    adapter = __webpack_require__(28);
-  }
-  return adapter;
-}
-
-var defaults = {
-  adapter: getDefaultAdapter(),
-
-  transformRequest: [function transformRequest(data, headers) {
-    normalizeHeaderName(headers, 'Content-Type');
-    if (utils.isFormData(data) ||
-      utils.isArrayBuffer(data) ||
-      utils.isBuffer(data) ||
-      utils.isStream(data) ||
-      utils.isFile(data) ||
-      utils.isBlob(data)
-    ) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isURLSearchParams(data)) {
-      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
-      return data.toString();
-    }
-    if (utils.isObject(data)) {
-      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
-      return JSON.stringify(data);
-    }
-    return data;
-  }],
-
-  transformResponse: [function transformResponse(data) {
-    /*eslint no-param-reassign:0*/
-    if (typeof data === 'string') {
-      try {
-        data = JSON.parse(data);
-      } catch (e) { /* Ignore */ }
-    }
-    return data;
-  }],
-
-  /**
-   * A timeout in milliseconds to abort a request. If set to 0 (default) a
-   * timeout is not created.
-   */
-  timeout: 0,
-
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
-
-  maxContentLength: -1,
-
-  validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 300;
-  }
-};
-
-defaults.headers = {
-  common: {
-    'Accept': 'application/json, text/plain, */*'
-  }
-};
-
-utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-  defaults.headers[method] = {};
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
-});
-
-module.exports = defaults;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ }),
-/* 21 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_template_id_4f65cd9c___ = __webpack_require__(69);
-/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "render", function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_template_id_4f65cd9c___["a"]; });
-/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_template_id_4f65cd9c___["b"]; });
-
-
-/***/ }),
 /* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactPage_vue_vue_type_template_id_75a4c431___ = __webpack_require__(72);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactPage_vue_vue_type_template_id_75a4c431___ = __webpack_require__(69);
 /* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "render", function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactPage_vue_vue_type_template_id_75a4c431___["a"]; });
 /* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactPage_vue_vue_type_template_id_75a4c431___["b"]; });
 
@@ -11280,31 +11280,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_IdentityCallback_vue_vue_type_template_id_0607f831___ = __webpack_require__(74);
-/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "render", function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_IdentityCallback_vue_vue_type_template_id_0607f831___["a"]; });
-/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_IdentityCallback_vue_vue_type_template_id_0607f831___["b"]; });
-
-
-/***/ }),
-/* 24 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_template_id_37fe478e___ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_template_id_37fe478e___ = __webpack_require__(74);
 /* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "render", function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_template_id_37fe478e___["a"]; });
 /* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_template_id_37fe478e___["b"]; });
 
 
 /***/ }),
-/* 25 */,
-/* 26 */
+/* 24 */,
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(48);
+module.exports = __webpack_require__(45);
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11322,19 +11311,19 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(52);
-var buildURL = __webpack_require__(54);
-var parseHeaders = __webpack_require__(55);
-var isURLSameOrigin = __webpack_require__(56);
-var createError = __webpack_require__(29);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(57);
+var settle = __webpack_require__(49);
+var buildURL = __webpack_require__(51);
+var parseHeaders = __webpack_require__(52);
+var isURLSameOrigin = __webpack_require__(53);
+var createError = __webpack_require__(28);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(54);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -11431,7 +11420,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(58);
+      var cookies = __webpack_require__(55);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -11510,13 +11499,13 @@ module.exports = function xhrAdapter(config) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var enhanceError = __webpack_require__(53);
+var enhanceError = __webpack_require__(50);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -11535,7 +11524,7 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11547,7 +11536,7 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11573,18 +11562,18 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_script_lang_js___ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_script_lang_js___ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_script_lang_js____default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_script_lang_js___);
 /* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_script_lang_js___) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_script_lang_js___[key]; }) }(__WEBPACK_IMPORT_KEY__));
  /* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_HomePage_vue_vue_type_script_lang_js____default.a); 
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11594,7 +11583,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _myFeatureServices = __webpack_require__(70);
+var _myFeatureServices = __webpack_require__(67);
 
 var _myFeatureServices2 = _interopRequireDefault(_myFeatureServices);
 
@@ -11610,8 +11599,13 @@ exports.default = {
     mounted: function mounted() {
         var _this = this;
 
-        _myFeatureServices2.default.getSampleData().then(function (data) {
-            _this.sampleData = data || [];
+        this.$identity.getUser().then(function (user) {
+            if (user) {
+                var myFeatureServices = new _myFeatureServices2.default(user.access_token);
+                myFeatureServices.getSampleData().then(function (data) {
+                    _this.sampleData = data || [];
+                });
+            }
         });
     }
 }; //
@@ -11628,18 +11622,18 @@ exports.default = {
 //
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactPage_vue_vue_type_script_lang_js___ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactPage_vue_vue_type_script_lang_js___ = __webpack_require__(34);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactPage_vue_vue_type_script_lang_js____default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactPage_vue_vue_type_script_lang_js___);
 /* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactPage_vue_vue_type_script_lang_js___) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactPage_vue_vue_type_script_lang_js___[key]; }) }(__WEBPACK_IMPORT_KEY__));
  /* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_ContactPage_vue_vue_type_script_lang_js____default.a); 
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11660,61 +11654,18 @@ exports.default = {
 };
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_IdentityCallback_vue_vue_type_script_lang_js___ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_IdentityCallback_vue_vue_type_script_lang_js____default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_IdentityCallback_vue_vue_type_script_lang_js___);
-/* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_IdentityCallback_vue_vue_type_script_lang_js___) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_IdentityCallback_vue_vue_type_script_lang_js___[key]; }) }(__WEBPACK_IMPORT_KEY__));
- /* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_IdentityCallback_vue_vue_type_script_lang_js____default.a); 
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _vue = __webpack_require__(1);
-
-var _vue2 = _interopRequireDefault(_vue);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    name: 'identity-callback',
-    mounted: function mounted() {
-        this.$identity.signinRedirectCallback().then(function () {
-            window.location = "/";
-        }).catch(function (err) {
-            console.log(err);
-        });
-    }
-}; //
-//
-//
-//
-//
-
-/***/ }),
-/* 38 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js___ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js___ = __webpack_require__(36);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js____default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js___);
 /* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js___) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js___[key]; }) }(__WEBPACK_IMPORT_KEY__));
  /* harmony default export */ __webpack_exports__["default"] = (__WEBPACK_IMPORTED_MODULE_0__node_modules_babel_loader_lib_index_js_node_modules_vue_loader_lib_index_js_vue_loader_options_App_vue_vue_type_script_lang_js____default.a); 
 
 /***/ }),
-/* 39 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11732,11 +11683,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 exports.default = {
     name: 'app',
+    data: function data() {
+        return {
+            loggedIn: false
+        };
+    },
     mounted: function mounted() {
         var self = this;
         this.$identity.getUser().then(function (user) {
             if (!user) {
                 self.$identity.signinRedirect();
+            } else {
+                self.loggedIn = true;
             }
         });
     },
@@ -11773,19 +11731,19 @@ exports.default = {
 //
 
 /***/ }),
+/* 37 */,
+/* 38 */,
+/* 39 */,
 /* 40 */,
-/* 41 */,
-/* 42 */,
-/* 43 */,
-/* 44 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(7);
-module.exports = __webpack_require__(45);
+__webpack_require__(5);
+module.exports = __webpack_require__(42);
 
 
 /***/ }),
-/* 45 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11797,19 +11755,19 @@ var _vue = __webpack_require__(1);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _axios = __webpack_require__(26);
+var _axios = __webpack_require__(25);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _router = __webpack_require__(66);
+var _router = __webpack_require__(63);
 
 var _router2 = _interopRequireDefault(_router);
 
-var _identity = __webpack_require__(75);
+var _identity = __webpack_require__(70);
 
 var _identity2 = _interopRequireDefault(_identity);
 
-var _App = __webpack_require__(78);
+var _App = __webpack_require__(73);
 
 var _App2 = _interopRequireDefault(_App);
 
@@ -11818,10 +11776,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 _vue2.default.use(_identity2.default, {
     authority: "https://localhost:44316/",
     client_id: "aspnetcoresk.vue",
-    redirect_uri: "https://localhost:44388/callback",
+    redirect_uri: "https://localhost:44388/static/callback.html",
     response_type: "id_token token",
     scope: "openid profile MyFeaturesApi",
-    post_logout_redirect_uri: "https://localhost:44388/"
+    post_logout_redirect_uri: "https://localhost:44388"
 });
 
 var app = new _vue2.default(_extends({
@@ -11831,7 +11789,7 @@ var app = new _vue2.default(_extends({
 app.$mount('#app');
 
 /***/ }),
-/* 46 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
@@ -11887,7 +11845,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(47);
+__webpack_require__(44);
 // On some exotic environments, it's not clear which object `setimmediate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -11901,7 +11859,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ }),
-/* 47 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -12094,16 +12052,16 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(4)))
 
 /***/ }),
-/* 48 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var bind = __webpack_require__(27);
-var Axios = __webpack_require__(50);
-var defaults = __webpack_require__(20);
+var bind = __webpack_require__(26);
+var Axios = __webpack_require__(47);
+var defaults = __webpack_require__(18);
 
 /**
  * Create an instance of Axios
@@ -12136,15 +12094,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(31);
-axios.CancelToken = __webpack_require__(64);
-axios.isCancel = __webpack_require__(30);
+axios.Cancel = __webpack_require__(30);
+axios.CancelToken = __webpack_require__(61);
+axios.isCancel = __webpack_require__(29);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(65);
+axios.spread = __webpack_require__(62);
 
 module.exports = axios;
 
@@ -12153,7 +12111,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 49 */
+/* 46 */
 /***/ (function(module, exports) {
 
 /*!
@@ -12180,16 +12138,16 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 50 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(20);
+var defaults = __webpack_require__(18);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(59);
-var dispatchRequest = __webpack_require__(60);
+var InterceptorManager = __webpack_require__(56);
+var dispatchRequest = __webpack_require__(57);
 
 /**
  * Create a new instance of Axios
@@ -12266,7 +12224,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 51 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12285,13 +12243,13 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 52 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(29);
+var createError = __webpack_require__(28);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -12318,7 +12276,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 53 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12346,7 +12304,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 54 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12419,7 +12377,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 55 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12479,7 +12437,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 56 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12554,7 +12512,7 @@ module.exports = (
 
 
 /***/ }),
-/* 57 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12597,7 +12555,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 58 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12657,7 +12615,7 @@ module.exports = (
 
 
 /***/ }),
-/* 59 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12716,18 +12674,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 60 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(61);
-var isCancel = __webpack_require__(30);
-var defaults = __webpack_require__(20);
-var isAbsoluteURL = __webpack_require__(62);
-var combineURLs = __webpack_require__(63);
+var transformData = __webpack_require__(58);
+var isCancel = __webpack_require__(29);
+var defaults = __webpack_require__(18);
+var isAbsoluteURL = __webpack_require__(59);
+var combineURLs = __webpack_require__(60);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -12809,7 +12767,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 61 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12836,7 +12794,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 62 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12857,7 +12815,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 63 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12878,13 +12836,13 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 64 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(31);
+var Cancel = __webpack_require__(30);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -12942,7 +12900,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 65 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12976,7 +12934,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 66 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12990,21 +12948,17 @@ var _vue = __webpack_require__(1);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _vueRouter = __webpack_require__(67);
+var _vueRouter = __webpack_require__(64);
 
 var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
-var _HomePage = __webpack_require__(68);
+var _HomePage = __webpack_require__(65);
 
 var _HomePage2 = _interopRequireDefault(_HomePage);
 
-var _ContactPage = __webpack_require__(71);
+var _ContactPage = __webpack_require__(68);
 
 var _ContactPage2 = _interopRequireDefault(_ContactPage);
-
-var _IdentityCallback = __webpack_require__(73);
-
-var _IdentityCallback2 = _interopRequireDefault(_IdentityCallback);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -13012,13 +12966,13 @@ _vue2.default.use(_vueRouter2.default);
 
 var router = new _vueRouter2.default({
     mode: 'history',
-    routes: [{ path: '/', component: _HomePage2.default }, { path: '/contact', component: _ContactPage2.default }, { path: '/callback', component: _IdentityCallback2.default }]
+    routes: [{ path: '/', component: _HomePage2.default }, { path: '/contact', component: _ContactPage2.default }]
 });
 
 exports.default = router;
 
 /***/ }),
-/* 67 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -15650,15 +15604,15 @@ if (inBrowser && window.Vue) {
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(4)))
 
 /***/ }),
-/* 68 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__HomePage_vue_vue_type_template_id_4f65cd9c___ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__HomePage_vue_vue_type_script_lang_js___ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__HomePage_vue_vue_type_template_id_4f65cd9c___ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__HomePage_vue_vue_type_script_lang_js___ = __webpack_require__(31);
 /* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_1__HomePage_vue_vue_type_script_lang_js___) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_1__HomePage_vue_vue_type_script_lang_js___[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_componentNormalizer_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_componentNormalizer_js__ = __webpack_require__(20);
 
 
 
@@ -15679,7 +15633,7 @@ var component = Object(__WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_
 
 /* hot reload */
 if (true) {
-  var api = __webpack_require__(6)
+  var api = __webpack_require__(21)
   api.install(__webpack_require__(1))
   if (api.compatible) {
     module.hot.accept()
@@ -15688,7 +15642,7 @@ if (true) {
     } else {
       api.reload('4f65cd9c', component.options)
     }
-    module.hot.accept(21, function(__WEBPACK_OUTDATED_DEPENDENCIES__) { /* harmony import */ __WEBPACK_IMPORTED_MODULE_0__HomePage_vue_vue_type_template_id_4f65cd9c___ = __webpack_require__(21); (function () {
+    module.hot.accept(19, function(__WEBPACK_OUTDATED_DEPENDENCIES__) { /* harmony import */ __WEBPACK_IMPORTED_MODULE_0__HomePage_vue_vue_type_template_id_4f65cd9c___ = __webpack_require__(19); (function () {
       api.rerender('4f65cd9c', {
         render: __WEBPACK_IMPORTED_MODULE_0__HomePage_vue_vue_type_template_id_4f65cd9c___["render"],
         staticRenderFns: __WEBPACK_IMPORTED_MODULE_0__HomePage_vue_vue_type_template_id_4f65cd9c___["staticRenderFns"]
@@ -15700,7 +15654,7 @@ component.options.__file = "Client\\components\\pages\\HomePage.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
-/* 69 */
+/* 66 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -15741,7 +15695,7 @@ render._withStripped = true
 
 
 /***/ }),
-/* 70 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15751,38 +15705,54 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _axios = __webpack_require__(26);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _axios = __webpack_require__(25);
 
 var _axios2 = _interopRequireDefault(_axios);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var myFeatureServices = {
-    getSampleData: function getSampleData() {
-        return _axios2.default.get('/myfeature/api/sample').then(function (response) {
-            return response.data;
-        }).catch(function (err) {
-            console.log(err);
-            return {
-                isError: true,
-                errorMessage: err
-            };
-        });
-    }
-};
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-exports.default = myFeatureServices;
+var MyFeatureServices = function () {
+    function MyFeatureServices(accessToken) {
+        _classCallCheck(this, MyFeatureServices);
+
+        _axios2.default.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
+    }
+
+    _createClass(MyFeatureServices, [{
+        key: 'getSampleData',
+        value: function getSampleData() {
+            return _axios2.default.get('/myfeature/api/sample').then(function (response) {
+                return response.data;
+            }).catch(function (err) {
+                console.log(err);
+                return {
+                    isError: true,
+                    errorMessage: err
+                };
+            });
+        }
+    }]);
+
+    return MyFeatureServices;
+}();
+
+exports.default = MyFeatureServices;
+;
 
 /***/ }),
-/* 71 */
+/* 68 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ContactPage_vue_vue_type_template_id_75a4c431___ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ContactPage_vue_vue_type_script_lang_js___ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ContactPage_vue_vue_type_script_lang_js___ = __webpack_require__(33);
 /* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_1__ContactPage_vue_vue_type_script_lang_js___) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_1__ContactPage_vue_vue_type_script_lang_js___[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_componentNormalizer_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_componentNormalizer_js__ = __webpack_require__(20);
 
 
 
@@ -15803,7 +15773,7 @@ var component = Object(__WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_
 
 /* hot reload */
 if (true) {
-  var api = __webpack_require__(6)
+  var api = __webpack_require__(21)
   api.install(__webpack_require__(1))
   if (api.compatible) {
     module.hot.accept()
@@ -15824,7 +15794,7 @@ component.options.__file = "Client\\components\\pages\\ContactPage.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
-/* 72 */
+/* 69 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -15853,82 +15823,7 @@ render._withStripped = true
 
 
 /***/ }),
-/* 73 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__IdentityCallback_vue_vue_type_template_id_0607f831___ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__IdentityCallback_vue_vue_type_script_lang_js___ = __webpack_require__(36);
-/* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_1__IdentityCallback_vue_vue_type_script_lang_js___) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_1__IdentityCallback_vue_vue_type_script_lang_js___[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_componentNormalizer_js__ = __webpack_require__(5);
-
-
-
-
-
-/* normalize component */
-
-var component = Object(__WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_componentNormalizer_js__["a" /* default */])(
-  __WEBPACK_IMPORTED_MODULE_1__IdentityCallback_vue_vue_type_script_lang_js___["default"],
-  __WEBPACK_IMPORTED_MODULE_0__IdentityCallback_vue_vue_type_template_id_0607f831___["render"],
-  __WEBPACK_IMPORTED_MODULE_0__IdentityCallback_vue_vue_type_template_id_0607f831___["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (true) {
-  var api = __webpack_require__(6)
-  api.install(__webpack_require__(1))
-  if (api.compatible) {
-    module.hot.accept()
-    if (!module.hot.data) {
-      api.createRecord('0607f831', component.options)
-    } else {
-      api.reload('0607f831', component.options)
-    }
-    module.hot.accept(23, function(__WEBPACK_OUTDATED_DEPENDENCIES__) { /* harmony import */ __WEBPACK_IMPORTED_MODULE_0__IdentityCallback_vue_vue_type_template_id_0607f831___ = __webpack_require__(23); (function () {
-      api.rerender('0607f831', {
-        render: __WEBPACK_IMPORTED_MODULE_0__IdentityCallback_vue_vue_type_template_id_0607f831___["render"],
-        staticRenderFns: __WEBPACK_IMPORTED_MODULE_0__IdentityCallback_vue_vue_type_template_id_0607f831___["staticRenderFns"]
-      })
-    })(__WEBPACK_OUTDATED_DEPENDENCIES__); })
-  }
-}
-component.options.__file = "Client\\components\\pages\\IdentityCallback.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-/* 74 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [_c("h1", [_vm._v("Loading")])])
-  }
-]
-render._withStripped = true
-
-
-
-/***/ }),
-/* 75 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15942,11 +15837,11 @@ var _vue = __webpack_require__(1);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _oidcClient = __webpack_require__(76);
+var _oidcClient = __webpack_require__(71);
 
 var _oidcClient2 = _interopRequireDefault(_oidcClient);
 
-var _IdentityService = __webpack_require__(77);
+var _IdentityService = __webpack_require__(72);
 
 var _IdentityService2 = _interopRequireDefault(_IdentityService);
 
@@ -15964,7 +15859,7 @@ var Identity = {
 exports.default = Identity;
 
 /***/ }),
-/* 76 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 !function webpackUniversalModuleDefinition(e,t){if(true)module.exports=t();else if("function"==typeof define&&define.amd)define([],t);else{var r=t();for(var n in r)("object"==typeof exports?exports:e)[n]=r[n]}}(window,function(){return function(e){var t={};function __webpack_require__(r){if(t[r])return t[r].exports;var n=t[r]={i:r,l:!1,exports:{}};return e[r].call(n.exports,n,n.exports,__webpack_require__),n.l=!0,n.exports}return __webpack_require__.m=e,__webpack_require__.c=t,__webpack_require__.d=function(e,t,r){__webpack_require__.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},__webpack_require__.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},__webpack_require__.t=function(e,t){if(1&t&&(e=__webpack_require__(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(__webpack_require__.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var n in e)__webpack_require__.d(r,n,function(t){return e[t]}.bind(null,n));return r},__webpack_require__.n=function(e){var t=e&&e.__esModule?function getDefault(){return e.default}:function getModuleExports(){return e};return __webpack_require__.d(t,"a",t),t},__webpack_require__.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},__webpack_require__.p="",__webpack_require__(__webpack_require__.s=45)}([function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var n=function(){function defineProperties(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(e,t,r){return t&&defineProperties(e.prototype,t),r&&defineProperties(e,r),e}}();var i={debug:function debug(){},info:function info(){},warn:function warn(){},error:function error(){}},o=void 0,s=void 0;(t.Log=function(){function Log(){!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,Log)}return Log.reset=function reset(){s=3,o=i},Log.debug=function debug(){if(s>=4){for(var e=arguments.length,t=Array(e),r=0;r<e;r++)t[r]=arguments[r];o.debug.apply(o,Array.from(t))}},Log.info=function info(){if(s>=3){for(var e=arguments.length,t=Array(e),r=0;r<e;r++)t[r]=arguments[r];o.info.apply(o,Array.from(t))}},Log.warn=function warn(){if(s>=2){for(var e=arguments.length,t=Array(e),r=0;r<e;r++)t[r]=arguments[r];o.warn.apply(o,Array.from(t))}},Log.error=function error(){if(s>=1){for(var e=arguments.length,t=Array(e),r=0;r<e;r++)t[r]=arguments[r];o.error.apply(o,Array.from(t))}},n(Log,null,[{key:"NONE",get:function get(){return 0}},{key:"ERROR",get:function get(){return 1}},{key:"WARN",get:function get(){return 2}},{key:"INFO",get:function get(){return 3}},{key:"DEBUG",get:function get(){return 4}},{key:"level",get:function get(){return s},set:function set(e){if(!(0<=e&&e<=4))throw new Error("Invalid log level");s=e}},{key:"logger",get:function get(){return o},set:function set(e){if(!e.debug&&e.info&&(e.debug=e.info),!(e.debug&&e.info&&e.warn&&e.error))throw new Error("Invalid logger");o=e}}]),Log}()).reset()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var n=function(){function defineProperties(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(e,t,r){return t&&defineProperties(e.prototype,t),r&&defineProperties(e,r),e}}();var i={setInterval:function(e){function setInterval(t,r){return e.apply(this,arguments)}return setInterval.toString=function(){return e.toString()},setInterval}(function(e,t){return setInterval(e,t)}),clearInterval:function(e){function clearInterval(t){return e.apply(this,arguments)}return clearInterval.toString=function(){return e.toString()},clearInterval}(function(e){return clearInterval(e)})},o=!1,s=null;t.Global=function(){function Global(){!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,Global)}return Global._testing=function _testing(){o=!0},Global.setXMLHttpRequest=function setXMLHttpRequest(e){s=e},n(Global,null,[{key:"location",get:function get(){if(!o)return location}},{key:"localStorage",get:function get(){if(!o&&"undefined"!=typeof window)return localStorage}},{key:"sessionStorage",get:function get(){if(!o&&"undefined"!=typeof window)return sessionStorage}},{key:"XMLHttpRequest",get:function get(){if(!o&&"undefined"!=typeof window)return s||XMLHttpRequest}},{key:"timer",get:function get(){if(!o)return i}}]),Global}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.UrlUtility=void 0;var n=r(0),i=r(1);t.UrlUtility=function(){function UrlUtility(){!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,UrlUtility)}return UrlUtility.addQueryParam=function addQueryParam(e,t,r){return e.indexOf("?")<0&&(e+="?"),"?"!==e[e.length-1]&&(e+="&"),e+=encodeURIComponent(t),e+="=",e+=encodeURIComponent(r)},UrlUtility.parseUrlFragment=function parseUrlFragment(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"#",r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:i.Global;"string"!=typeof e&&(e=r.location.href);var o=e.lastIndexOf(t);o>=0&&(e=e.substr(o+1));for(var s,a={},u=/([^&=]+)=([^&]*)/g,c=0;s=u.exec(e);)if(a[decodeURIComponent(s[1])]=decodeURIComponent(s[2]),c++>50)return n.Log.error("UrlUtility.parseUrlFragment: response exceeded expected number of parameters",e),{error:"Response exceeded expected number of parameters"};for(var h in a)return a;return{}},UrlUtility}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.MetadataService=void 0;var n=function(){function defineProperties(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(e,t,r){return t&&defineProperties(e.prototype,t),r&&defineProperties(e,r),e}}(),i=r(0),o=r(17);t.MetadataService=function(){function MetadataService(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:o.JsonService;if(function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,MetadataService),!e)throw i.Log.error("MetadataService: No settings passed to MetadataService"),new Error("settings");this._settings=e,this._jsonService=new t(["application/jwk-set+json"])}return MetadataService.prototype.getMetadata=function getMetadata(){var e=this;return this._settings.metadata?(i.Log.debug("MetadataService.getMetadata: Returning metadata from settings"),Promise.resolve(this._settings.metadata)):this.metadataUrl?(i.Log.debug("MetadataService.getMetadata: getting metadata from",this.metadataUrl),this._jsonService.getJson(this.metadataUrl).then(function(t){return i.Log.debug("MetadataService.getMetadata: json received"),e._settings.metadata=t,t})):(i.Log.error("MetadataService.getMetadata: No authority or metadataUrl configured on settings"),Promise.reject(new Error("No authority or metadataUrl configured on settings")))},MetadataService.prototype.getIssuer=function getIssuer(){return this._getMetadataProperty("issuer")},MetadataService.prototype.getAuthorizationEndpoint=function getAuthorizationEndpoint(){return this._getMetadataProperty("authorization_endpoint")},MetadataService.prototype.getUserInfoEndpoint=function getUserInfoEndpoint(){return this._getMetadataProperty("userinfo_endpoint")},MetadataService.prototype.getTokenEndpoint=function getTokenEndpoint(){return this._getMetadataProperty("token_endpoint",!0)},MetadataService.prototype.getCheckSessionIframe=function getCheckSessionIframe(){return this._getMetadataProperty("check_session_iframe",!0)},MetadataService.prototype.getEndSessionEndpoint=function getEndSessionEndpoint(){return this._getMetadataProperty("end_session_endpoint",!0)},MetadataService.prototype.getRevocationEndpoint=function getRevocationEndpoint(){return this._getMetadataProperty("revocation_endpoint",!0)},MetadataService.prototype._getMetadataProperty=function _getMetadataProperty(e){var t=arguments.length>1&&void 0!==arguments[1]&&arguments[1];return i.Log.debug("MetadataService.getMetadataProperty for: "+e),this.getMetadata().then(function(r){if(i.Log.debug("MetadataService.getMetadataProperty: metadata recieved"),void 0===r[e]){if(!0===t)return void i.Log.warn("MetadataService.getMetadataProperty: Metadata does not contain optional property "+e);throw i.Log.error("MetadataService.getMetadataProperty: Metadata does not contain property "+e),new Error("Metadata does not contain property "+e)}return r[e]})},MetadataService.prototype.getSigningKeys=function getSigningKeys(){var e=this;return this._settings.signingKeys?(i.Log.debug("MetadataService.getSigningKeys: Returning signingKeys from settings"),Promise.resolve(this._settings.signingKeys)):this._getMetadataProperty("jwks_uri").then(function(t){return i.Log.debug("MetadataService.getSigningKeys: jwks_uri received",t),e._jsonService.getJson(t).then(function(t){if(i.Log.debug("MetadataService.getSigningKeys: key set received",t),!t.keys)throw i.Log.error("MetadataService.getSigningKeys: Missing keys on keyset"),new Error("Missing keys on keyset");return e._settings.signingKeys=t.keys,e._settings.signingKeys})})},n(MetadataService,[{key:"metadataUrl",get:function get(){return this._metadataUrl||(this._settings.metadataUrl?this._metadataUrl=this._settings.metadataUrl:(this._metadataUrl=this._settings.authority,this._metadataUrl&&this._metadataUrl.indexOf(".well-known/openid-configuration")<0&&("/"!==this._metadataUrl[this._metadataUrl.length-1]&&(this._metadataUrl+="/"),this._metadataUrl+=".well-known/openid-configuration"))),this._metadataUrl}}]),MetadataService}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.State=void 0;var n=function(){function defineProperties(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(e,t,r){return t&&defineProperties(e.prototype,t),r&&defineProperties(e,r),e}}(),i=r(0),o=function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}(r(14));t.State=function(){function State(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},t=e.id,r=e.data,n=e.created;!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,State),this._id=t||(0,o.default)(),this._data=r,this._created="number"==typeof n&&n>0?n:parseInt(Date.now()/1e3)}return State.prototype.toStorageString=function toStorageString(){return i.Log.debug("State.toStorageString"),JSON.stringify({id:this.id,data:this.data,created:this.created})},State.fromStorageString=function fromStorageString(e){return i.Log.debug("State.fromStorageString"),new State(JSON.parse(e))},State.clearStaleState=function clearStaleState(e,t){var r=Date.now()/1e3-t;return e.getAllKeys().then(function(t){i.Log.debug("State.clearStaleState: got keys",t);for(var n=[],o=function _loop(o){var s=t[o];a=e.get(s).then(function(t){var n=!1;if(t)try{var o=State.fromStorageString(t);i.Log.debug("State.clearStaleState: got item from key: ",s,o.created),o.created<=r&&(n=!0)}catch(e){i.Log.error("State.clearStaleState: Error parsing state for key",s,e.message),n=!0}else i.Log.debug("State.clearStaleState: no item in storage for key: ",s),n=!0;if(n)return i.Log.debug("State.clearStaleState: removed item for key: ",s),e.remove(s)}),n.push(a)},s=0;s<t.length;s++){var a;o(s)}return i.Log.debug("State.clearStaleState: waiting on promise count:",n.length),Promise.all(n)})},n(State,[{key:"id",get:function get(){return this._id}},{key:"data",get:function get(){return this._data}},{key:"created",get:function get(){return this._created}}]),State}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.WebStorageStateStore=void 0;var n=r(0),i=r(1);t.WebStorageStateStore=function(){function WebStorageStateStore(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},t=e.prefix,r=void 0===t?"oidc.":t,n=e.store,o=void 0===n?i.Global.localStorage:n;!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,WebStorageStateStore),this._store=o,this._prefix=r}return WebStorageStateStore.prototype.set=function set(e,t){return n.Log.debug("WebStorageStateStore.set",e),e=this._prefix+e,this._store.setItem(e,t),Promise.resolve()},WebStorageStateStore.prototype.get=function get(e){n.Log.debug("WebStorageStateStore.get",e),e=this._prefix+e;var t=this._store.getItem(e);return Promise.resolve(t)},WebStorageStateStore.prototype.remove=function remove(e){n.Log.debug("WebStorageStateStore.remove",e),e=this._prefix+e;var t=this._store.getItem(e);return this._store.removeItem(e),Promise.resolve(t)},WebStorageStateStore.prototype.getAllKeys=function getAllKeys(){n.Log.debug("WebStorageStateStore.getAllKeys");for(var e=[],t=0;t<this._store.length;t++){var r=this._store.key(t);0===r.indexOf(this._prefix)&&e.push(r.substr(this._prefix.length))}return Promise.resolve(e)},WebStorageStateStore}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.OidcClientSettings=void 0;var n="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e},i=function(){function defineProperties(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(e,t,r){return t&&defineProperties(e.prototype,t),r&&defineProperties(e,r),e}}(),o=r(0),s=r(5),a=r(44),u=r(3);var c="id_token",h="openid",f=900,l=300;t.OidcClientSettings=function(){function OidcClientSettings(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},t=e.authority,r=e.metadataUrl,i=e.metadata,o=e.signingKeys,g=e.client_id,p=e.client_secret,d=e.response_type,v=void 0===d?c:d,y=e.scope,m=void 0===y?h:y,S=e.redirect_uri,F=e.post_logout_redirect_uri,b=e.prompt,_=e.display,w=e.max_age,E=e.ui_locales,x=e.acr_values,C=e.resource,P=e.filterProtocolClaims,A=void 0===P||P,k=e.loadUserInfo,I=void 0===k||k,B=e.staleStateAge,R=void 0===B?f:B,T=e.clockSkew,U=void 0===T?l:T,M=e.stateStore,L=void 0===M?new s.WebStorageStateStore:M,D=e.ResponseValidatorCtor,N=void 0===D?a.ResponseValidator:D,O=e.MetadataServiceCtor,H=void 0===O?u.MetadataService:O,j=e.extraQueryParams,K=void 0===j?{}:j;!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,OidcClientSettings),this._authority=t,this._metadataUrl=r,this._metadata=i,this._signingKeys=o,this._client_id=g,this._client_secret=p,this._response_type=v,this._scope=m,this._redirect_uri=S,this._post_logout_redirect_uri=F,this._prompt=b,this._display=_,this._max_age=w,this._ui_locales=E,this._acr_values=x,this._resource=C,this._filterProtocolClaims=!!A,this._loadUserInfo=!!I,this._staleStateAge=R,this._clockSkew=U,this._stateStore=L,this._validator=new N(this),this._metadataService=new H(this),this._extraQueryParams="object"===(void 0===K?"undefined":n(K))?K:{}}return i(OidcClientSettings,[{key:"client_id",get:function get(){return this._client_id},set:function set(e){if(this._client_id)throw o.Log.error("OidcClientSettings.set_client_id: client_id has already been assigned."),new Error("client_id has already been assigned.");this._client_id=e}},{key:"client_secret",get:function get(){return this._client_secret}},{key:"response_type",get:function get(){return this._response_type}},{key:"scope",get:function get(){return this._scope}},{key:"redirect_uri",get:function get(){return this._redirect_uri}},{key:"post_logout_redirect_uri",get:function get(){return this._post_logout_redirect_uri}},{key:"prompt",get:function get(){return this._prompt}},{key:"display",get:function get(){return this._display}},{key:"max_age",get:function get(){return this._max_age}},{key:"ui_locales",get:function get(){return this._ui_locales}},{key:"acr_values",get:function get(){return this._acr_values}},{key:"resource",get:function get(){return this._resource}},{key:"authority",get:function get(){return this._authority},set:function set(e){if(this._authority)throw o.Log.error("OidcClientSettings.set_authority: authority has already been assigned."),new Error("authority has already been assigned.");this._authority=e}},{key:"metadataUrl",get:function get(){return this._metadataUrl||(this._metadataUrl=this.authority,this._metadataUrl&&this._metadataUrl.indexOf(".well-known/openid-configuration")<0&&("/"!==this._metadataUrl[this._metadataUrl.length-1]&&(this._metadataUrl+="/"),this._metadataUrl+=".well-known/openid-configuration")),this._metadataUrl}},{key:"metadata",get:function get(){return this._metadata},set:function set(e){this._metadata=e}},{key:"signingKeys",get:function get(){return this._signingKeys},set:function set(e){this._signingKeys=e}},{key:"filterProtocolClaims",get:function get(){return this._filterProtocolClaims}},{key:"loadUserInfo",get:function get(){return this._loadUserInfo}},{key:"staleStateAge",get:function get(){return this._staleStateAge}},{key:"clockSkew",get:function get(){return this._clockSkew}},{key:"stateStore",get:function get(){return this._stateStore}},{key:"validator",get:function get(){return this._validator}},{key:"metadataService",get:function get(){return this._metadataService}},{key:"extraQueryParams",get:function get(){return this._extraQueryParams},set:function set(e){"object"===(void 0===e?"undefined":n(e))?this._extraQueryParams=e:this._extraQueryParams={}}}]),OidcClientSettings}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.CordovaPopupWindow=void 0;var n=function(){function defineProperties(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(e,t,r){return t&&defineProperties(e.prototype,t),r&&defineProperties(e,r),e}}(),i=r(0);var o="location=no,toolbar=no,zoom=no",s="_blank";t.CordovaPopupWindow=function(){function CordovaPopupWindow(e){var t=this;!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,CordovaPopupWindow),this._promise=new Promise(function(e,r){t._resolve=e,t._reject=r}),this.features=e.popupWindowFeatures||o,this.target=e.popupWindowTarget||s,this.redirect_uri=e.startUrl,i.Log.debug("CordovaPopupWindow.ctor: redirect_uri: "+this.redirect_uri)}return CordovaPopupWindow.prototype._isInAppBrowserInstalled=function _isInAppBrowserInstalled(e){return["cordova-plugin-inappbrowser","cordova-plugin-inappbrowser.inappbrowser","org.apache.cordova.inappbrowser"].some(function(t){return e.hasOwnProperty(t)})},CordovaPopupWindow.prototype.navigate=function navigate(e){if(e&&e.url){if(!window.cordova)return this._error("cordova is undefined");var t=window.cordova.require("cordova/plugin_list").metadata;if(!1===this._isInAppBrowserInstalled(t))return this._error("InAppBrowser plugin not found");this._popup=cordova.InAppBrowser.open(e.url,this.target,this.features),this._popup?(i.Log.debug("CordovaPopupWindow.navigate: popup successfully created"),this._exitCallbackEvent=this._exitCallback.bind(this),this._loadStartCallbackEvent=this._loadStartCallback.bind(this),this._popup.addEventListener("exit",this._exitCallbackEvent,!1),this._popup.addEventListener("loadstart",this._loadStartCallbackEvent,!1)):this._error("Error opening popup window")}else this._error("No url provided");return this.promise},CordovaPopupWindow.prototype._loadStartCallback=function _loadStartCallback(e){0===e.url.indexOf(this.redirect_uri)&&this._success({url:e.url})},CordovaPopupWindow.prototype._exitCallback=function _exitCallback(e){this._error(e)},CordovaPopupWindow.prototype._success=function _success(e){this._cleanup(),i.Log.debug("CordovaPopupWindow: Successful response from cordova popup window"),this._resolve(e)},CordovaPopupWindow.prototype._error=function _error(e){this._cleanup(),i.Log.error(e),this._reject(new Error(e))},CordovaPopupWindow.prototype.close=function close(){this._cleanup()},CordovaPopupWindow.prototype._cleanup=function _cleanup(){this._popup&&(i.Log.debug("CordovaPopupWindow: cleaning up popup"),this._popup.removeEventListener("exit",this._exitCallbackEvent,!1),this._popup.removeEventListener("loadstart",this._loadStartCallbackEvent,!1),this._popup.close()),this._popup=null},n(CordovaPopupWindow,[{key:"promise",get:function get(){return this._promise}}]),CordovaPopupWindow}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.TokenRevocationClient=void 0;var n=r(0),i=r(3),o=r(1);t.TokenRevocationClient=function(){function TokenRevocationClient(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:o.Global.XMLHttpRequest,r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:i.MetadataService;if(function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,TokenRevocationClient),!e)throw n.Log.error("TokenRevocationClient.ctor: No settings provided"),new Error("No settings provided.");this._settings=e,this._XMLHttpRequestCtor=t,this._metadataService=new r(this._settings)}return TokenRevocationClient.prototype.revoke=function revoke(e,t){var r=this;if(!e)throw n.Log.error("TokenRevocationClient.revoke: No accessToken provided"),new Error("No accessToken provided.");return this._metadataService.getRevocationEndpoint().then(function(i){if(i){n.Log.error("TokenRevocationClient.revoke: Revoking access token");var o=r._settings.client_id,s=r._settings.client_secret;return r._revoke(i,o,s,e)}if(t)throw n.Log.error("TokenRevocationClient.revoke: Revocation not supported"),new Error("Revocation not supported")})},TokenRevocationClient.prototype._revoke=function _revoke(e,t,r,i){var o=this;return new Promise(function(s,a){var u=new o._XMLHttpRequestCtor;u.open("POST",e),u.onload=function(){n.Log.debug("TokenRevocationClient.revoke: HTTP response received, status",u.status),200===u.status?s():a(Error(u.statusText+" ("+u.status+")"))};var c="client_id="+encodeURIComponent(t);r&&(c+="&client_secret="+encodeURIComponent(r)),c+="&token_type_hint="+encodeURIComponent("access_token"),c+="&token="+encodeURIComponent(i),u.setRequestHeader("Content-Type","application/x-www-form-urlencoded"),u.send(c)})},TokenRevocationClient}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.CheckSessionIFrame=void 0;var n=r(0);var i=2e3;t.CheckSessionIFrame=function(){function CheckSessionIFrame(e,t,r,n){var o=!(arguments.length>4&&void 0!==arguments[4])||arguments[4];!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,CheckSessionIFrame),this._callback=e,this._client_id=t,this._url=r,this._interval=n||i,this._stopOnError=o;var s=r.indexOf("/",r.indexOf("//")+2);this._frame_origin=r.substr(0,s),this._frame=window.document.createElement("iframe"),this._frame.style.visibility="hidden",this._frame.style.position="absolute",this._frame.style.display="none",this._frame.style.width=0,this._frame.style.height=0,this._frame.src=r}return CheckSessionIFrame.prototype.load=function load(){var e=this;return new Promise(function(t){e._frame.onload=function(){t()},window.document.body.appendChild(e._frame),e._boundMessageEvent=e._message.bind(e),window.addEventListener("message",e._boundMessageEvent,!1)})},CheckSessionIFrame.prototype._message=function _message(e){e.origin===this._frame_origin&&e.source===this._frame.contentWindow&&("error"===e.data?(n.Log.error("CheckSessionIFrame: error message from check session op iframe"),this._stopOnError&&this.stop()):"changed"===e.data?(n.Log.debug("CheckSessionIFrame: changed message from check session op iframe"),this.stop(),this._callback()):n.Log.debug("CheckSessionIFrame: "+e.data+" message from check session op iframe"))},CheckSessionIFrame.prototype.start=function start(e){var t=this;if(this._session_state!==e){n.Log.debug("CheckSessionIFrame.start"),this.stop(),this._session_state=e;var r=function send(){t._frame.contentWindow.postMessage(t._client_id+" "+t._session_state,t._frame_origin)};r(),this._timer=window.setInterval(r,this._interval)}},CheckSessionIFrame.prototype.stop=function stop(){this._session_state=null,this._timer&&(n.Log.debug("CheckSessionIFrame.stop"),window.clearInterval(this._timer),this._timer=null)},CheckSessionIFrame}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.SessionMonitor=void 0;var n=function(){function defineProperties(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(e,t,r){return t&&defineProperties(e.prototype,t),r&&defineProperties(e,r),e}}(),i=r(0),o=r(9);t.SessionMonitor=function(){function SessionMonitor(e){var t=this,r=arguments.length>1&&void 0!==arguments[1]?arguments[1]:o.CheckSessionIFrame;if(function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,SessionMonitor),!e)throw i.Log.error("SessionMonitor.ctor: No user manager passed to SessionMonitor"),new Error("userManager");this._userManager=e,this._CheckSessionIFrameCtor=r,this._userManager.events.addUserLoaded(this._start.bind(this)),this._userManager.events.addUserUnloaded(this._stop.bind(this)),this._userManager.getUser().then(function(e){e&&t._start(e)}).catch(function(e){i.Log.error("SessionMonitor ctor: error from getUser:",e.message)})}return SessionMonitor.prototype._start=function _start(e){var t=this,r=e.session_state;r&&(this._sub=e.profile.sub,this._sid=e.profile.sid,i.Log.debug("SessionMonitor._start: session_state:",r,", sub:",this._sub),this._checkSessionIFrame?this._checkSessionIFrame.start(r):this._metadataService.getCheckSessionIframe().then(function(e){if(e){i.Log.debug("SessionMonitor._start: Initializing check session iframe");var n=t._client_id,o=t._checkSessionInterval,s=t._stopCheckSessionOnError;t._checkSessionIFrame=new t._CheckSessionIFrameCtor(t._callback.bind(t),n,e,o,s),t._checkSessionIFrame.load().then(function(){t._checkSessionIFrame.start(r)})}else i.Log.warn("SessionMonitor._start: No check session iframe found in the metadata")}).catch(function(e){i.Log.error("SessionMonitor._start: Error from getCheckSessionIframe:",e.message)}))},SessionMonitor.prototype._stop=function _stop(){this._sub=null,this._sid=null,this._checkSessionIFrame&&(i.Log.debug("SessionMonitor._stop"),this._checkSessionIFrame.stop())},SessionMonitor.prototype._callback=function _callback(){var e=this;this._userManager.querySessionStatus().then(function(t){var r=!0;t?t.sub===e._sub?(r=!1,e._checkSessionIFrame.start(t.session_state),t.sid===e._sid?i.Log.debug("SessionMonitor._callback: Same sub still logged in at OP, restarting check session iframe; session_state:",t.session_state):(i.Log.debug("SessionMonitor._callback: Same sub still logged in at OP, session state has changed, restarting check session iframe; session_state:",t.session_state),e._userManager.events._raiseUserSessionChanged())):i.Log.debug("SessionMonitor._callback: Different subject signed into OP:",t.sub):i.Log.debug("SessionMonitor._callback: Subject no longer signed into OP"),r&&(i.Log.debug("SessionMonitor._callback: SessionMonitor._callback; raising signed out event"),e._userManager.events._raiseUserSignedOut())}).catch(function(t){i.Log.debug("SessionMonitor._callback: Error calling queryCurrentSigninSession; raising signed out event",t.message),e._userManager.events._raiseUserSignedOut()})},n(SessionMonitor,[{key:"_settings",get:function get(){return this._userManager.settings}},{key:"_metadataService",get:function get(){return this._userManager.metadataService}},{key:"_client_id",get:function get(){return this._settings.client_id}},{key:"_checkSessionInterval",get:function get(){return this._settings.checkSessionInterval}},{key:"_stopCheckSessionOnError",get:function get(){return this._settings.stopCheckSessionOnError}}]),SessionMonitor}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.Event=void 0;var n=r(0);t.Event=function(){function Event(e){!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,Event),this._name=e,this._callbacks=[]}return Event.prototype.addHandler=function addHandler(e){this._callbacks.push(e)},Event.prototype.removeHandler=function removeHandler(e){var t=this._callbacks.findIndex(function(t){return t===e});t>=0&&this._callbacks.splice(t,1)},Event.prototype.raise=function raise(){n.Log.debug("Event: Raising event: "+this._name);for(var e=0;e<this._callbacks.length;e++){var t;(t=this._callbacks)[e].apply(t,arguments)}},Event}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.AccessTokenEvents=void 0;var n=r(0),i=r(22);var o=60;t.AccessTokenEvents=function(){function AccessTokenEvents(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},t=e.accessTokenExpiringNotificationTime,r=void 0===t?o:t,n=e.accessTokenExpiringTimer,s=void 0===n?new i.Timer("Access token expiring"):n,a=e.accessTokenExpiredTimer,u=void 0===a?new i.Timer("Access token expired"):a;!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,AccessTokenEvents),this._accessTokenExpiringNotificationTime=r,this._accessTokenExpiring=s,this._accessTokenExpired=u}return AccessTokenEvents.prototype.load=function load(e){if(e.access_token&&void 0!==e.expires_in){var t=e.expires_in;if(n.Log.debug("AccessTokenEvents.load: access token present, remaining duration:",t),t>0){var r=t-this._accessTokenExpiringNotificationTime;r<=0&&(r=1),n.Log.debug("AccessTokenEvents.load: registering expiring timer in:",r),this._accessTokenExpiring.init(r)}else n.Log.debug("AccessTokenEvents.load: canceling existing expiring timer becase we're past expiration."),this._accessTokenExpiring.cancel();var i=t+1;n.Log.debug("AccessTokenEvents.load: registering expired timer in:",i),this._accessTokenExpired.init(i)}else this._accessTokenExpiring.cancel(),this._accessTokenExpired.cancel()},AccessTokenEvents.prototype.unload=function unload(){n.Log.debug("AccessTokenEvents.unload: canceling existing access token timers"),this._accessTokenExpiring.cancel(),this._accessTokenExpired.cancel()},AccessTokenEvents.prototype.addAccessTokenExpiring=function addAccessTokenExpiring(e){this._accessTokenExpiring.addHandler(e)},AccessTokenEvents.prototype.removeAccessTokenExpiring=function removeAccessTokenExpiring(e){this._accessTokenExpiring.removeHandler(e)},AccessTokenEvents.prototype.addAccessTokenExpired=function addAccessTokenExpired(e){this._accessTokenExpired.addHandler(e)},AccessTokenEvents.prototype.removeAccessTokenExpired=function removeAccessTokenExpired(e){this._accessTokenExpired.removeHandler(e)},AccessTokenEvents}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.User=void 0;var n=function(){function defineProperties(e,t){for(var r=0;r<t.length;r++){var n=t[r];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(e,t,r){return t&&defineProperties(e.prototype,t),r&&defineProperties(e,r),e}}(),i=r(0);t.User=function(){function User(e){var t=e.id_token,r=e.session_state,n=e.access_token,i=e.token_type,o=e.scope,s=e.profile,a=e.expires_at,u=e.state;!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,User),this.id_token=t,this.session_state=r,this.access_token=n,this.token_type=i,this.scope=o,this.profile=s,this.expires_at=a,this.state=u}return User.prototype.toStorageString=function toStorageString(){return i.Log.debug("User.toStorageString"),JSON.stringify({id_token:this.id_token,session_state:this.session_state,access_token:this.access_token,token_type:this.token_type,scope:this.scope,profile:this.profile,expires_at:this.expires_at})},User.fromStorageString=function fromStorageString(e){return i.Log.debug("User.fromStorageString"),new User(JSON.parse(e))},n(User,[{key:"expires_in",get:function get(){if(this.expires_at){var e=parseInt(Date.now()/1e3);return this.expires_at-e}}},{key:"expired",get:function get(){var e=this.expires_in;if(void 0!==e)return e<=0}},{key:"scopes",get:function get(){return(this.scope||"").split(" ")}}]),User}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default=
@@ -16015,7 +15910,7 @@ function ECFieldElementFp(e,t){this.x=t,this.q=e}function ECPointFp(e,t,r,n){thi
 var K,q,W,V=function(){var e=new RegExp('(?:false|true|null|[\\{\\}\\[\\]]|(?:-?\\b(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\\b)|(?:"(?:[^\\0-\\x08\\x0a-\\x1f"\\\\]|\\\\(?:["/\\\\bfnrt]|u[0-9A-Fa-f]{4}))*"))',"g"),t=new RegExp("\\\\(?:([^u])|u(.{4}))","g"),r={'"':'"',"/":"/","\\":"\\",b:"\b",f:"\f",n:"\n",r:"\r",t:"\t"};function h(e,t,n){return t?r[t]:String.fromCharCode(parseInt(n,16))}var n=new String(""),o=(Object,Array,Object.hasOwnProperty);return function(r,a){var u,c,f=r.match(e),l=f[0],g=!1;"{"===l?u={}:"["===l?u=[]:(u=[],g=!0);for(var p=[u],d=1-g,v=f.length;d<v;++d){var y;switch((l=f[d]).charCodeAt(0)){default:(y=p[0])[c||y.length]=+l,c=void 0;break;case 34:if(-1!==(l=l.substring(1,l.length-1)).indexOf("\\")&&(l=l.replace(t,h)),y=p[0],!c){if(!(y instanceof Array)){c=l||n;break}c=y.length}y[c]=l,c=void 0;break;case 91:y=p[0],p.unshift(y[c||y.length]=[]),c=void 0;break;case 93:p.shift();break;case 102:(y=p[0])[c||y.length]=!1,c=void 0;break;case 110:(y=p[0])[c||y.length]=null,c=void 0;break;case 116:(y=p[0])[c||y.length]=!0,c=void 0;break;case 123:y=p[0],p.unshift(y[c||y.length]={}),c=void 0;break;case 125:p.shift()}}if(g){if(1!==p.length)throw new Error;u=u[0]}else if(p.length)throw new Error;if(a){u=function s(e,t){var r=e[t];if(r&&"object"===(void 0===r?"undefined":i(r))){var n=null;for(var u in r)if(o.call(r,u)&&r!==e){var c=s(r,u);void 0!==c?r[u]=c:(n||(n=[]),n.push(u))}if(n)for(var h=n.length;--h>=0;)delete r[n[h]]}return a.call(e,t,r)}({"":u},"")}return u}}(),J=new function(){};function stoBA(e){for(var t=new Array,r=0;r<e.length;r++)t[r]=e.charCodeAt(r);return t}function BAtos(e){for(var t="",r=0;r<e.length;r++)t+=String.fromCharCode(e[r]);return t}function BAtohex(e){for(var t="",r=0;r<e.length;r++){var n=e[r].toString(16);1==n.length&&(n="0"+n),t+=n}return t}function stohex(e){return BAtohex(stoBA(e))}function b64tob64u(e){return e=(e=(e=e.replace(/\=/g,"")).replace(/\+/g,"-")).replace(/\//g,"_")}function b64utob64(e){return e.length%4==2?e+="==":e.length%4==3&&(e+="="),e=(e=e.replace(/-/g,"+")).replace(/_/g,"/")}function hextob64u(e){return e.length%2==1&&(e="0"+e),b64tob64u(hex2b64(e))}function b64utohex(e){return b64tohex(b64utob64(e))}function utf8tohex(e){return uricmptohex(encodeURIComponentAll(e))}function hextoutf8(e){return decodeURIComponent(hextouricmp(e))}function hextorstr(e){for(var t="",r=0;r<e.length-1;r+=2)t+=String.fromCharCode(parseInt(e.substr(r,2),16));return t}function rstrtohex(e){for(var t="",r=0;r<e.length;r++)t+=("0"+e.charCodeAt(r).toString(16)).slice(-2);return t}function hextob64(e){return hex2b64(e)}function hextob64nl(e){var t=hextob64(e).replace(/(.{64})/g,"$1\r\n");return t=t.replace(/\r\n$/,"")}function b64nltohex(e){return b64tohex(e.replace(/[^0-9A-Za-z\/+=]*/g,""))}function hextopem(e,t){return"-----BEGIN "+t+"-----\r\n"+hextob64nl(e)+"\r\n-----END "+t+"-----\r\n"}function pemtohex(e,t){if(-1==e.indexOf("-----BEGIN "))throw"can't find PEM header: "+t;return b64nltohex(e=void 0!==t?(e=e.replace("-----BEGIN "+t+"-----","")).replace("-----END "+t+"-----",""):(e=e.replace(/-----BEGIN [^-]+-----/,"")).replace(/-----END [^-]+-----/,""))}function zulutomsec(e){var t,r,n,i,o,s,a,u,c,h,f;if(f=e.match(/^(\d{2}|\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(|\.\d+)Z$/))return u=f[1],t=parseInt(u),2===u.length&&(50<=t&&t<100?t=1900+t:0<=t&&t<50&&(t=2e3+t)),r=parseInt(f[2])-1,n=parseInt(f[3]),i=parseInt(f[4]),o=parseInt(f[5]),s=parseInt(f[6]),a=0,""!==(c=f[7])&&(h=(c.substr(1)+"00").substr(0,3),a=parseInt(h)),Date.UTC(t,r,n,i,o,s,a);throw"unsupported zulu format: "+e}function zulutosec(e){return~~(zulutomsec(e)/1e3)}function uricmptohex(e){return e.replace(/%/g,"")}function hextouricmp(e){return e.replace(/(..)/g,"%$1")}function ipv6tohex(e){var t="malformed IPv6 address";if(!e.match(/^[0-9A-Fa-f:]+$/))throw t;var r=(e=e.toLowerCase()).split(":").length-1;if(r<2)throw t;var n=":".repeat(7-r+2),i=(e=e.replace("::",n)).split(":");if(8!=i.length)throw t;for(var o=0;o<8;o++)i[o]=("0000"+i[o]).slice(-4);return i.join("")}function hextoipv6(e){if(!e.match(/^[0-9A-Fa-f]{32}$/))throw"malformed IPv6 address octet";for(var t=(e=e.toLowerCase()).match(/.{1,4}/g),r=0;r<8;r++)t[r]=t[r].replace(/^0+/,""),""==t[r]&&(t[r]="0");var n=(e=":"+t.join(":")+":").match(/:(0:){2,}/g);if(null===n)return e.slice(1,-1);var i="";for(r=0;r<n.length;r++)n[r].length>i.length&&(i=n[r]);return(e=e.replace(i,"::")).slice(1,-1)}function hextoip(e){var t="malformed hex value";if(!e.match(/^([0-9A-Fa-f][0-9A-Fa-f]){1,}$/))throw t;if(8!=e.length)return 32==e.length?hextoipv6(e):e;try{return parseInt(e.substr(0,2),16)+"."+parseInt(e.substr(2,2),16)+"."+parseInt(e.substr(4,2),16)+"."+parseInt(e.substr(6,2),16)}catch(e){throw t}}function encodeURIComponentAll(e){for(var t=encodeURIComponent(e),r="",n=0;n<t.length;n++)"%"==t[n]?(r+=t.substr(n,3),n+=2):r=r+"%"+stohex(t[n]);return r}function hextoposhex(e){return e.length%2==1?"0"+e:e.substr(0,1)>"7"?"00"+e:e}J.getLblen=function(e,t){if("8"!=e.substr(t+2,1))return 1;var r=parseInt(e.substr(t+3,1));return 0==r?-1:0<r&&r<10?r+1:-2},J.getL=function(e,t){var r=J.getLblen(e,t);return r<1?"":e.substr(t+2,2*r)},J.getVblen=function(e,t){var r;return""==(r=J.getL(e,t))?-1:("8"===r.substr(0,1)?new BigInteger(r.substr(2),16):new BigInteger(r,16)).intValue()},J.getVidx=function(e,t){var r=J.getLblen(e,t);return r<0?r:t+2*(r+1)},J.getV=function(e,t){var r=J.getVidx(e,t),n=J.getVblen(e,t);return e.substr(r,2*n)},J.getTLV=function(e,t){return e.substr(t,2)+J.getL(e,t)+J.getV(e,t)},J.getNextSiblingIdx=function(e,t){return J.getVidx(e,t)+2*J.getVblen(e,t)},J.getChildIdx=function(e,t){var r=J,n=new Array,i=r.getVidx(e,t);"03"==e.substr(t,2)?n.push(i+2):n.push(i);for(var o=r.getVblen(e,t),s=i,a=0;;){var u=r.getNextSiblingIdx(e,s);if(null==u||u-i>=2*o)break;if(a>=200)break;n.push(u),s=u,a++}return n},J.getNthChildIdx=function(e,t,r){return J.getChildIdx(e,t)[r]},J.getIdxbyList=function(e,t,r,n){var i,o,s=J;if(0==r.length){if(void 0!==n&&e.substr(t,2)!==n)throw"checking tag doesn't match: "+e.substr(t,2)+"!="+n;return t}return i=r.shift(),o=s.getChildIdx(e,t),s.getIdxbyList(e,o[i],r,n)},J.getTLVbyList=function(e,t,r,n){var i=J,o=i.getIdxbyList(e,t,r);if(void 0===o)throw"can't find nthList object";if(void 0!==n&&e.substr(o,2)!=n)throw"checking tag doesn't match: "+e.substr(o,2)+"!="+n;return i.getTLV(e,o)},J.getVbyList=function(e,t,r,n,i){var o,s,a=J;if(void 0===(o=a.getIdxbyList(e,t,r,n)))throw"can't find nthList object";return s=a.getV(e,o),!0===i&&(s=s.substr(2)),s},J.hextooidstr=function(e){var t=function h(e,t){return e.length>=t?e:new Array(t-e.length+1).join("0")+e},r=[],n=e.substr(0,2),i=parseInt(n,16);r[0]=new String(Math.floor(i/40)),r[1]=new String(i%40);for(var o=e.substr(2),s=[],a=0;a<o.length/2;a++)s.push(parseInt(o.substr(2*a,2),16));var u=[],c="";for(a=0;a<s.length;a++)128&s[a]?c+=t((127&s[a]).toString(2),7):(c+=t((127&s[a]).toString(2),7),u.push(new String(parseInt(c,2))),c="");var h=r.join(".");return u.length>0&&(h=h+"."+u.join(".")),h},J.dump=function(e,t,r,n){var i=J,o=i.getV,s=i.dump,a=i.getChildIdx,u=e;e instanceof K.asn1.ASN1Object&&(u=e.getEncodedHex());var c=function q(e,t){return e.length<=2*t?e:e.substr(0,t)+"..(total "+e.length/2+"bytes).."+e.substr(e.length-t,t)};void 0===t&&(t={ommit_long_octet:32}),void 0===r&&(r=0),void 0===n&&(n="");var h=t.ommit_long_octet;if("01"==u.substr(r,2))return"00"==(f=o(u,r))?n+"BOOLEAN FALSE\n":n+"BOOLEAN TRUE\n";if("02"==u.substr(r,2))return n+"INTEGER "+c(f=o(u,r),h)+"\n";if("03"==u.substr(r,2))return n+"BITSTRING "+c(f=o(u,r),h)+"\n";if("04"==u.substr(r,2)){var f=o(u,r);if(i.isASN1HEX(f)){var l=n+"OCTETSTRING, encapsulates\n";return l+=s(f,t,0,n+"  ")}return n+"OCTETSTRING "+c(f,h)+"\n"}if("05"==u.substr(r,2))return n+"NULL\n";if("06"==u.substr(r,2)){var g=o(u,r),p=K.asn1.ASN1Util.oidHexToInt(g),d=K.asn1.x509.OID.oid2name(p),v=p.replace(/\./g," ");return""!=d?n+"ObjectIdentifier "+d+" ("+v+")\n":n+"ObjectIdentifier ("+v+")\n"}if("0c"==u.substr(r,2))return n+"UTF8String '"+hextoutf8(o(u,r))+"'\n";if("13"==u.substr(r,2))return n+"PrintableString '"+hextoutf8(o(u,r))+"'\n";if("14"==u.substr(r,2))return n+"TeletexString '"+hextoutf8(o(u,r))+"'\n";if("16"==u.substr(r,2))return n+"IA5String '"+hextoutf8(o(u,r))+"'\n";if("17"==u.substr(r,2))return n+"UTCTime "+hextoutf8(o(u,r))+"\n";if("18"==u.substr(r,2))return n+"GeneralizedTime "+hextoutf8(o(u,r))+"\n";if("30"==u.substr(r,2)){if("3000"==u.substr(r,4))return n+"SEQUENCE {}\n";l=n+"SEQUENCE\n";var y=t;if((2==(F=a(u,r)).length||3==F.length)&&"06"==u.substr(F[0],2)&&"04"==u.substr(F[F.length-1],2)){d=i.oidname(o(u,F[0]));var m=JSON.parse(JSON.stringify(t));m.x509ExtName=d,y=m}for(var S=0;S<F.length;S++)l+=s(u,y,F[S],n+"  ");return l}if("31"==u.substr(r,2)){l=n+"SET\n";var F=a(u,r);for(S=0;S<F.length;S++)l+=s(u,t,F[S],n+"  ");return l}var b=parseInt(u.substr(r,2),16);if(0!=(128&b)){var _=31&b;if(0!=(32&b)){var l=n+"["+_+"]\n";for(F=a(u,r),S=0;S<F.length;S++)l+=s(u,t,F[S],n+"  ");return l}return"68747470"==(f=o(u,r)).substr(0,8)&&(f=hextoutf8(f)),"subjectAltName"===t.x509ExtName&&2==_&&(f=hextoutf8(f)),l=n+"["+_+"] "+f+"\n"}return n+"UNKNOWN("+u.substr(r,2)+") "+o(u,r)+"\n"},J.isASN1HEX=function(e){var t=J;if(e.length%2==1)return!1;var r=t.getVblen(e,0),n=e.substr(0,2),i=t.getL(e,0);return e.length-n.length-i.length==2*r},J.oidname=function(e){var t=K.asn1;K.lang.String.isHex(e)&&(e=t.ASN1Util.oidHexToInt(e));var r=t.x509.OID.oid2name(e);return""===r&&(r=e),r},void 0!==K&&K||(K={}),void 0!==K.lang&&K.lang||(K.lang={}),K.lang.String=function(){},"function"==typeof n?(q=function utf8tob64u(e){return b64tob64u(new n(e,"utf8").toString("base64"))},W=function b64utoutf8(e){return new n(b64utob64(e),"base64").toString("utf8")}):(q=function utf8tob64u(e){return hextob64u(uricmptohex(encodeURIComponentAll(e)))},W=function b64utoutf8(e){return decodeURIComponent(hextouricmp(b64utohex(e)))}),K.lang.String.isInteger=function(e){return!!e.match(/^[0-9]+$/)||!!e.match(/^-[0-9]+$/)},K.lang.String.isHex=function(e){return!(e.length%2!=0||!e.match(/^[0-9a-f]+$/)&&!e.match(/^[0-9A-F]+$/))},K.lang.String.isBase64=function(e){return!(!(e=e.replace(/\s+/g,"")).match(/^[0-9A-Za-z+\/]+={0,3}$/)||e.length%4!=0)},K.lang.String.isBase64URL=function(e){return!e.match(/[+/=]/)&&(e=b64utob64(e),K.lang.String.isBase64(e))},K.lang.String.isIntegerArray=function(e){return!!(e=e.replace(/\s+/g,"")).match(/^\[[0-9,]+\]$/)};void 0!==K&&K||(K={}),void 0!==K.crypto&&K.crypto||(K.crypto={}),K.crypto.Util=new function(){this.DIGESTINFOHEAD={sha1:"3021300906052b0e03021a05000414",sha224:"302d300d06096086480165030402040500041c",sha256:"3031300d060960864801650304020105000420",sha384:"3041300d060960864801650304020205000430",sha512:"3051300d060960864801650304020305000440",md2:"3020300c06082a864886f70d020205000410",md5:"3020300c06082a864886f70d020505000410",ripemd160:"3021300906052b2403020105000414"},this.DEFAULTPROVIDER={md5:"cryptojs",sha1:"cryptojs",sha224:"cryptojs",sha256:"cryptojs",sha384:"cryptojs",sha512:"cryptojs",ripemd160:"cryptojs",hmacmd5:"cryptojs",hmacsha1:"cryptojs",hmacsha224:"cryptojs",hmacsha256:"cryptojs",hmacsha384:"cryptojs",hmacsha512:"cryptojs",hmacripemd160:"cryptojs",MD5withRSA:"cryptojs/jsrsa",SHA1withRSA:"cryptojs/jsrsa",SHA224withRSA:"cryptojs/jsrsa",SHA256withRSA:"cryptojs/jsrsa",SHA384withRSA:"cryptojs/jsrsa",SHA512withRSA:"cryptojs/jsrsa",RIPEMD160withRSA:"cryptojs/jsrsa",MD5withECDSA:"cryptojs/jsrsa",SHA1withECDSA:"cryptojs/jsrsa",SHA224withECDSA:"cryptojs/jsrsa",SHA256withECDSA:"cryptojs/jsrsa",SHA384withECDSA:"cryptojs/jsrsa",SHA512withECDSA:"cryptojs/jsrsa",RIPEMD160withECDSA:"cryptojs/jsrsa",SHA1withDSA:"cryptojs/jsrsa",SHA224withDSA:"cryptojs/jsrsa",SHA256withDSA:"cryptojs/jsrsa",MD5withRSAandMGF1:"cryptojs/jsrsa",SHA1withRSAandMGF1:"cryptojs/jsrsa",SHA224withRSAandMGF1:"cryptojs/jsrsa",SHA256withRSAandMGF1:"cryptojs/jsrsa",SHA384withRSAandMGF1:"cryptojs/jsrsa",SHA512withRSAandMGF1:"cryptojs/jsrsa",RIPEMD160withRSAandMGF1:"cryptojs/jsrsa"},this.CRYPTOJSMESSAGEDIGESTNAME={md5:y.algo.MD5,sha1:y.algo.SHA1,sha224:y.algo.SHA224,sha256:y.algo.SHA256,sha384:y.algo.SHA384,sha512:y.algo.SHA512,ripemd160:y.algo.RIPEMD160},this.getDigestInfoHex=function(e,t){if(void 0===this.DIGESTINFOHEAD[t])throw"alg not supported in Util.DIGESTINFOHEAD: "+t;return this.DIGESTINFOHEAD[t]+e},this.getPaddedDigestInfoHex=function(e,t,r){var n=this.getDigestInfoHex(e,t),i=r/4;if(n.length+22>i)throw"key is too short for SigAlg: keylen="+r+","+t;for(var o="0001",s="00"+n,a="",u=i-o.length-s.length,c=0;c<u;c+=2)a+="ff";return o+a+s},this.hashString=function(e,t){return new K.crypto.MessageDigest({alg:t}).digestString(e)},this.hashHex=function(e,t){return new K.crypto.MessageDigest({alg:t}).digestHex(e)},this.sha1=function(e){return new K.crypto.MessageDigest({alg:"sha1",prov:"cryptojs"}).digestString(e)},this.sha256=function(e){return new K.crypto.MessageDigest({alg:"sha256",prov:"cryptojs"}).digestString(e)},this.sha256Hex=function(e){return new K.crypto.MessageDigest({alg:"sha256",prov:"cryptojs"}).digestHex(e)},this.sha512=function(e){return new K.crypto.MessageDigest({alg:"sha512",prov:"cryptojs"}).digestString(e)},this.sha512Hex=function(e){return new K.crypto.MessageDigest({alg:"sha512",prov:"cryptojs"}).digestHex(e)}},K.crypto.Util.md5=function(e){return new K.crypto.MessageDigest({alg:"md5",prov:"cryptojs"}).digestString(e)},K.crypto.Util.ripemd160=function(e){return new K.crypto.MessageDigest({alg:"ripemd160",prov:"cryptojs"}).digestString(e)},K.crypto.Util.SECURERANDOMGEN=new SecureRandom,K.crypto.Util.getRandomHexOfNbytes=function(e){var t=new Array(e);return K.crypto.Util.SECURERANDOMGEN.nextBytes(t),BAtohex(t)},K.crypto.Util.getRandomBigIntegerOfNbytes=function(e){return new BigInteger(K.crypto.Util.getRandomHexOfNbytes(e),16)},K.crypto.Util.getRandomHexOfNbits=function(e){var t=e%8,r=new Array((e-t)/8+1);return K.crypto.Util.SECURERANDOMGEN.nextBytes(r),r[0]=(255<<t&255^255)&r[0],BAtohex(r)},K.crypto.Util.getRandomBigIntegerOfNbits=function(e){return new BigInteger(K.crypto.Util.getRandomHexOfNbits(e),16)},K.crypto.Util.getRandomBigIntegerZeroToMax=function(e){for(var t=e.bitLength();;){var r=K.crypto.Util.getRandomBigIntegerOfNbits(t);if(-1!=e.compareTo(r))return r}},K.crypto.Util.getRandomBigIntegerMinToMax=function(e,t){var r=e.compareTo(t);if(1==r)throw"biMin is greater than biMax";if(0==r)return e;var n=t.subtract(e);return K.crypto.Util.getRandomBigIntegerZeroToMax(n).add(e)},K.crypto.MessageDigest=function(e){this.setAlgAndProvider=function(e,t){if(null!==(e=K.crypto.MessageDigest.getCanonicalAlgName(e))&&void 0===t&&(t=K.crypto.Util.DEFAULTPROVIDER[e]),-1!=":md5:sha1:sha224:sha256:sha384:sha512:ripemd160:".indexOf(e)&&"cryptojs"==t){try{this.md=K.crypto.Util.CRYPTOJSMESSAGEDIGESTNAME[e].create()}catch(t){throw"setAlgAndProvider hash alg set fail alg="+e+"/"+t}this.updateString=function(e){this.md.update(e)},this.updateHex=function(e){var t=y.enc.Hex.parse(e);this.md.update(t)},this.digest=function(){return this.md.finalize().toString(y.enc.Hex)},this.digestString=function(e){return this.updateString(e),this.digest()},this.digestHex=function(e){return this.updateHex(e),this.digest()}}if(-1!=":sha256:".indexOf(e)&&"sjcl"==t){try{this.md=new sjcl.hash.sha256}catch(t){throw"setAlgAndProvider hash alg set fail alg="+e+"/"+t}this.updateString=function(e){this.md.update(e)},this.updateHex=function(e){var t=sjcl.codec.hex.toBits(e);this.md.update(t)},this.digest=function(){var e=this.md.finalize();return sjcl.codec.hex.fromBits(e)},this.digestString=function(e){return this.updateString(e),this.digest()},this.digestHex=function(e){return this.updateHex(e),this.digest()}}},this.updateString=function(e){throw"updateString(str) not supported for this alg/prov: "+this.algName+"/"+this.provName},this.updateHex=function(e){throw"updateHex(hex) not supported for this alg/prov: "+this.algName+"/"+this.provName},this.digest=function(){throw"digest() not supported for this alg/prov: "+this.algName+"/"+this.provName},this.digestString=function(e){throw"digestString(str) not supported for this alg/prov: "+this.algName+"/"+this.provName},this.digestHex=function(e){throw"digestHex(hex) not supported for this alg/prov: "+this.algName+"/"+this.provName},void 0!==e&&void 0!==e.alg&&(this.algName=e.alg,void 0===e.prov&&(this.provName=K.crypto.Util.DEFAULTPROVIDER[this.algName]),this.setAlgAndProvider(this.algName,this.provName))},K.crypto.MessageDigest.getCanonicalAlgName=function(e){return"string"==typeof e&&(e=(e=e.toLowerCase()).replace(/-/,"")),e},K.crypto.MessageDigest.getHashLength=function(e){var t=K.crypto.MessageDigest,r=t.getCanonicalAlgName(e);if(void 0===t.HASHLENGTH[r])throw"not supported algorithm: "+e;return t.HASHLENGTH[r]},K.crypto.MessageDigest.HASHLENGTH={md5:16,sha1:20,sha224:28,sha256:32,sha384:48,sha512:64,ripemd160:20},K.crypto.Mac=function(e){this.setAlgAndProvider=function(e,t){if(null==(e=e.toLowerCase())&&(e="hmacsha1"),"hmac"!=(e=e.toLowerCase()).substr(0,4))throw"setAlgAndProvider unsupported HMAC alg: "+e;void 0===t&&(t=K.crypto.Util.DEFAULTPROVIDER[e]),this.algProv=e+"/"+t;var r=e.substr(4);if(-1!=":md5:sha1:sha224:sha256:sha384:sha512:ripemd160:".indexOf(r)&&"cryptojs"==t){try{var n=K.crypto.Util.CRYPTOJSMESSAGEDIGESTNAME[r];this.mac=y.algo.HMAC.create(n,this.pass)}catch(e){throw"setAlgAndProvider hash alg set fail hashAlg="+r+"/"+e}this.updateString=function(e){this.mac.update(e)},this.updateHex=function(e){var t=y.enc.Hex.parse(e);this.mac.update(t)},this.doFinal=function(){return this.mac.finalize().toString(y.enc.Hex)},this.doFinalString=function(e){return this.updateString(e),this.doFinal()},this.doFinalHex=function(e){return this.updateHex(e),this.doFinal()}}},this.updateString=function(e){throw"updateString(str) not supported for this alg/prov: "+this.algProv},this.updateHex=function(e){throw"updateHex(hex) not supported for this alg/prov: "+this.algProv},this.doFinal=function(){throw"digest() not supported for this alg/prov: "+this.algProv},this.doFinalString=function(e){throw"digestString(str) not supported for this alg/prov: "+this.algProv},this.doFinalHex=function(e){throw"digestHex(hex) not supported for this alg/prov: "+this.algProv},this.setPassword=function(e){if("string"==typeof e){var t=e;return e.length%2!=1&&e.match(/^[0-9A-Fa-f]+$/)||(t=rstrtohex(e)),void(this.pass=y.enc.Hex.parse(t))}if("object"!=(void 0===e?"undefined":i(e)))throw"KJUR.crypto.Mac unsupported password type: "+e;t=null;if(void 0!==e.hex){if(e.hex.length%2!=0||!e.hex.match(/^[0-9A-Fa-f]+$/))throw"Mac: wrong hex password: "+e.hex;t=e.hex}if(void 0!==e.utf8&&(t=utf8tohex(e.utf8)),void 0!==e.rstr&&(t=rstrtohex(e.rstr)),void 0!==e.b64&&(t=b64tohex(e.b64)),void 0!==e.b64u&&(t=b64utohex(e.b64u)),null==t)throw"KJUR.crypto.Mac unsupported password type: "+e;this.pass=y.enc.Hex.parse(t)},void 0!==e&&(void 0!==e.pass&&this.setPassword(e.pass),void 0!==e.alg&&(this.algName=e.alg,void 0===e.prov&&(this.provName=K.crypto.Util.DEFAULTPROVIDER[this.algName]),this.setAlgAndProvider(this.algName,this.provName)))},K.crypto.Signature=function(e){var t=null;if(this._setAlgNames=function(){var e=this.algName.match(/^(.+)with(.+)$/);e&&(this.mdAlgName=e[1].toLowerCase(),this.pubkeyAlgName=e[2].toLowerCase())},this._zeroPaddingOfSignature=function(e,t){for(var r="",n=t/4-e.length,i=0;i<n;i++)r+="0";return r+e},this.setAlgAndProvider=function(e,t){if(this._setAlgNames(),"cryptojs/jsrsa"!=t)throw"provider not supported: "+t;if(-1!=":md5:sha1:sha224:sha256:sha384:sha512:ripemd160:".indexOf(this.mdAlgName)){try{this.md=new K.crypto.MessageDigest({alg:this.mdAlgName})}catch(e){throw"setAlgAndProvider hash alg set fail alg="+this.mdAlgName+"/"+e}this.init=function(e,t){var r=null;try{r=void 0===t?z.getKey(e):z.getKey(e,t)}catch(e){throw"init failed:"+e}if(!0===r.isPrivate)this.prvKey=r,this.state="SIGN";else{if(!0!==r.isPublic)throw"init failed.:"+r;this.pubKey=r,this.state="VERIFY"}},this.updateString=function(e){this.md.updateString(e)},this.updateHex=function(e){this.md.updateHex(e)},this.sign=function(){if(this.sHashHex=this.md.digest(),void 0!==this.ecprvhex&&void 0!==this.eccurvename){var e=new K.crypto.ECDSA({curve:this.eccurvename});this.hSign=e.signHex(this.sHashHex,this.ecprvhex)}else if(this.prvKey instanceof RSAKey&&"rsaandmgf1"===this.pubkeyAlgName)this.hSign=this.prvKey.signWithMessageHashPSS(this.sHashHex,this.mdAlgName,this.pssSaltLen);else if(this.prvKey instanceof RSAKey&&"rsa"===this.pubkeyAlgName)this.hSign=this.prvKey.signWithMessageHash(this.sHashHex,this.mdAlgName);else if(this.prvKey instanceof K.crypto.ECDSA)this.hSign=this.prvKey.signWithMessageHash(this.sHashHex);else{if(!(this.prvKey instanceof K.crypto.DSA))throw"Signature: unsupported private key alg: "+this.pubkeyAlgName;this.hSign=this.prvKey.signWithMessageHash(this.sHashHex)}return this.hSign},this.signString=function(e){return this.updateString(e),this.sign()},this.signHex=function(e){return this.updateHex(e),this.sign()},this.verify=function(e){if(this.sHashHex=this.md.digest(),void 0!==this.ecpubhex&&void 0!==this.eccurvename)return new K.crypto.ECDSA({curve:this.eccurvename}).verifyHex(this.sHashHex,e,this.ecpubhex);if(this.pubKey instanceof RSAKey&&"rsaandmgf1"===this.pubkeyAlgName)return this.pubKey.verifyWithMessageHashPSS(this.sHashHex,e,this.mdAlgName,this.pssSaltLen);if(this.pubKey instanceof RSAKey&&"rsa"===this.pubkeyAlgName)return this.pubKey.verifyWithMessageHash(this.sHashHex,e);if(void 0!==K.crypto.ECDSA&&this.pubKey instanceof K.crypto.ECDSA)return this.pubKey.verifyWithMessageHash(this.sHashHex,e);if(void 0!==K.crypto.DSA&&this.pubKey instanceof K.crypto.DSA)return this.pubKey.verifyWithMessageHash(this.sHashHex,e);throw"Signature: unsupported public key alg: "+this.pubkeyAlgName}}},this.init=function(e,t){throw"init(key, pass) not supported for this alg:prov="+this.algProvName},this.updateString=function(e){throw"updateString(str) not supported for this alg:prov="+this.algProvName},this.updateHex=function(e){throw"updateHex(hex) not supported for this alg:prov="+this.algProvName},this.sign=function(){throw"sign() not supported for this alg:prov="+this.algProvName},this.signString=function(e){throw"digestString(str) not supported for this alg:prov="+this.algProvName},this.signHex=function(e){throw"digestHex(hex) not supported for this alg:prov="+this.algProvName},this.verify=function(e){throw"verify(hSigVal) not supported for this alg:prov="+this.algProvName},this.initParams=e,void 0!==e&&(void 0!==e.alg&&(this.algName=e.alg,void 0===e.prov?this.provName=K.crypto.Util.DEFAULTPROVIDER[this.algName]:this.provName=e.prov,this.algProvName=this.algName+":"+this.provName,this.setAlgAndProvider(this.algName,this.provName),this._setAlgNames()),void 0!==e.psssaltlen&&(this.pssSaltLen=e.psssaltlen),void 0!==e.prvkeypem)){if(void 0!==e.prvkeypas)throw"both prvkeypem and prvkeypas parameters not supported";try{t=z.getKey(e.prvkeypem);this.init(t)}catch(e){throw"fatal error to load pem private key: "+e}}},K.crypto.Cipher=function(e){},K.crypto.Cipher.encrypt=function(e,t,r){if(t instanceof RSAKey&&t.isPublic){var n=K.crypto.Cipher.getAlgByKeyAndName(t,r);if("RSA"===n)return t.encrypt(e);if("RSAOAEP"===n)return t.encryptOAEP(e,"sha1");var i=n.match(/^RSAOAEP(\d+)$/);if(null!==i)return t.encryptOAEP(e,"sha"+i[1]);throw"Cipher.encrypt: unsupported algorithm for RSAKey: "+r}throw"Cipher.encrypt: unsupported key or algorithm"},K.crypto.Cipher.decrypt=function(e,t,r){if(t instanceof RSAKey&&t.isPrivate){var n=K.crypto.Cipher.getAlgByKeyAndName(t,r);if("RSA"===n)return t.decrypt(e);if("RSAOAEP"===n)return t.decryptOAEP(e,"sha1");var i=n.match(/^RSAOAEP(\d+)$/);if(null!==i)return t.decryptOAEP(e,"sha"+i[1]);throw"Cipher.decrypt: unsupported algorithm for RSAKey: "+r}throw"Cipher.decrypt: unsupported key or algorithm"},K.crypto.Cipher.getAlgByKeyAndName=function(e,t){if(e instanceof RSAKey){if(-1!=":RSA:RSAOAEP:RSAOAEP224:RSAOAEP256:RSAOAEP384:RSAOAEP512:".indexOf(t))return t;if(null===t||void 0===t)return"RSA";throw"getAlgByKeyAndName: not supported algorithm name for RSAKey: "+t}throw"getAlgByKeyAndName: not supported algorithm name: "+t},K.crypto.OID=new function(){this.oidhex2name={"2a864886f70d010101":"rsaEncryption","2a8648ce3d0201":"ecPublicKey","2a8648ce380401":"dsa","2a8648ce3d030107":"secp256r1","2b8104001f":"secp192k1","2b81040021":"secp224r1","2b8104000a":"secp256k1","2b81040023":"secp521r1","2b81040022":"secp384r1","2a8648ce380403":"SHA1withDSA","608648016503040301":"SHA224withDSA","608648016503040302":"SHA256withDSA"}},void 0!==K&&K||(K={}),void 0!==K.crypto&&K.crypto||(K.crypto={}),K.crypto.ECDSA=function(e){var t=new SecureRandom;this.type="EC",this.isPrivate=!1,this.isPublic=!1,this.getBigRandom=function(e){return new BigInteger(e.bitLength(),t).mod(e.subtract(BigInteger.ONE)).add(BigInteger.ONE)},this.setNamedCurve=function(e){this.ecparams=K.crypto.ECParameterDB.getByName(e),this.prvKeyHex=null,this.pubKeyHex=null,this.curveName=e},this.setPrivateKeyHex=function(e){this.isPrivate=!0,this.prvKeyHex=e},this.setPublicKeyHex=function(e){this.isPublic=!0,this.pubKeyHex=e},this.getPublicKeyXYHex=function(){var e=this.pubKeyHex;if("04"!==e.substr(0,2))throw"this method supports uncompressed format(04) only";var t=this.ecparams.keylen/4;if(e.length!==2+2*t)throw"malformed public key hex length";var r={};return r.x=e.substr(2,t),r.y=e.substr(2+t),r},this.getShortNISTPCurveName=function(){var e=this.curveName;return"secp256r1"===e||"NIST P-256"===e||"P-256"===e||"prime256v1"===e?"P-256":"secp384r1"===e||"NIST P-384"===e||"P-384"===e?"P-384":null},this.generateKeyPairHex=function(){var e=this.ecparams.n,t=this.getBigRandom(e),r=this.ecparams.G.multiply(t),n=r.getX().toBigInteger(),i=r.getY().toBigInteger(),o=this.ecparams.keylen/4,s=("0000000000"+t.toString(16)).slice(-o),a="04"+("0000000000"+n.toString(16)).slice(-o)+("0000000000"+i.toString(16)).slice(-o);return this.setPrivateKeyHex(s),this.setPublicKeyHex(a),{ecprvhex:s,ecpubhex:a}},this.signWithMessageHash=function(e){return this.signHex(e,this.prvKeyHex)},this.signHex=function(e,t){var r=new BigInteger(t,16),n=this.ecparams.n,i=new BigInteger(e,16);do{var o=this.getBigRandom(n),s=this.ecparams.G.multiply(o).getX().toBigInteger().mod(n)}while(s.compareTo(BigInteger.ZERO)<=0);var a=o.modInverse(n).multiply(i.add(r.multiply(s))).mod(n);return K.crypto.ECDSA.biRSSigToASN1Sig(s,a)},this.sign=function(e,t){var r=t,n=this.ecparams.n,i=BigInteger.fromByteArrayUnsigned(e);do{var o=this.getBigRandom(n),s=this.ecparams.G.multiply(o).getX().toBigInteger().mod(n)}while(s.compareTo(BigInteger.ZERO)<=0);var a=o.modInverse(n).multiply(i.add(r.multiply(s))).mod(n);return this.serializeSig(s,a)},this.verifyWithMessageHash=function(e,t){return this.verifyHex(e,t,this.pubKeyHex)},this.verifyHex=function(e,t,r){var n,i,o,s=K.crypto.ECDSA.parseSigHex(t);n=s.r,i=s.s,o=ECPointFp.decodeFromHex(this.ecparams.curve,r);var a=new BigInteger(e,16);return this.verifyRaw(a,n,i,o)},this.verify=function(e,t,r){var n,o,s;if(Bitcoin.Util.isArray(t)){var a=this.parseSig(t);n=a.r,o=a.s}else{if("object"!==(void 0===t?"undefined":i(t))||!t.r||!t.s)throw"Invalid value for signature";n=t.r,o=t.s}if(r instanceof ECPointFp)s=r;else{if(!Bitcoin.Util.isArray(r))throw"Invalid format for pubkey value, must be byte array or ECPointFp";s=ECPointFp.decodeFrom(this.ecparams.curve,r)}var u=BigInteger.fromByteArrayUnsigned(e);return this.verifyRaw(u,n,o,s)},this.verifyRaw=function(e,t,r,n){var i=this.ecparams.n,o=this.ecparams.G;if(t.compareTo(BigInteger.ONE)<0||t.compareTo(i)>=0)return!1;if(r.compareTo(BigInteger.ONE)<0||r.compareTo(i)>=0)return!1;var s=r.modInverse(i),a=e.multiply(s).mod(i),u=t.multiply(s).mod(i);return o.multiply(a).add(n.multiply(u)).getX().toBigInteger().mod(i).equals(t)},this.serializeSig=function(e,t){var r=e.toByteArraySigned(),n=t.toByteArraySigned(),i=[];return i.push(2),i.push(r.length),(i=i.concat(r)).push(2),i.push(n.length),(i=i.concat(n)).unshift(i.length),i.unshift(48),i},this.parseSig=function(e){var t;if(48!=e[0])throw new Error("Signature not a valid DERSequence");if(2!=e[t=2])throw new Error("First element in signature must be a DERInteger");var r=e.slice(t+2,t+2+e[t+1]);if(2!=e[t+=2+e[t+1]])throw new Error("Second element in signature must be a DERInteger");var n=e.slice(t+2,t+2+e[t+1]);return t+=2+e[t+1],{r:BigInteger.fromByteArrayUnsigned(r),s:BigInteger.fromByteArrayUnsigned(n)}},this.parseSigCompact=function(e){if(65!==e.length)throw"Signature has the wrong length";var t=e[0]-27;if(t<0||t>7)throw"Invalid signature type";var r=this.ecparams.n;return{r:BigInteger.fromByteArrayUnsigned(e.slice(1,33)).mod(r),s:BigInteger.fromByteArrayUnsigned(e.slice(33,65)).mod(r),i:t}},this.readPKCS5PrvKeyHex=function(e){var t,r,n,i=J,o=K.crypto.ECDSA.getName,s=i.getVbyList;if(!1===i.isASN1HEX(e))throw"not ASN.1 hex string";try{t=s(e,0,[2,0],"06"),r=s(e,0,[1],"04");try{n=s(e,0,[3,0],"03").substr(2)}catch(e){}}catch(e){throw"malformed PKCS#1/5 plain ECC private key"}if(this.curveName=o(t),void 0===this.curveName)throw"unsupported curve name";this.setNamedCurve(this.curveName),this.setPublicKeyHex(n),this.setPrivateKeyHex(r),this.isPublic=!1},this.readPKCS8PrvKeyHex=function(e){var t,r,n,i=J,o=K.crypto.ECDSA.getName,s=i.getVbyList;if(!1===i.isASN1HEX(e))throw"not ASN.1 hex string";try{s(e,0,[1,0],"06"),t=s(e,0,[1,1],"06"),r=s(e,0,[2,0,1],"04");try{n=s(e,0,[2,0,2,0],"03").substr(2)}catch(e){}}catch(e){throw"malformed PKCS#8 plain ECC private key"}if(this.curveName=o(t),void 0===this.curveName)throw"unsupported curve name";this.setNamedCurve(this.curveName),this.setPublicKeyHex(n),this.setPrivateKeyHex(r),this.isPublic=!1},this.readPKCS8PubKeyHex=function(e){var t,r,n=J,i=K.crypto.ECDSA.getName,o=n.getVbyList;if(!1===n.isASN1HEX(e))throw"not ASN.1 hex string";try{o(e,0,[0,0],"06"),t=o(e,0,[0,1],"06"),r=o(e,0,[1],"03").substr(2)}catch(e){throw"malformed PKCS#8 ECC public key"}if(this.curveName=i(t),null===this.curveName)throw"unsupported curve name";this.setNamedCurve(this.curveName),this.setPublicKeyHex(r)},this.readCertPubKeyHex=function(e,t){5!==t&&(t=6);var r,n,i=J,o=K.crypto.ECDSA.getName,s=i.getVbyList;if(!1===i.isASN1HEX(e))throw"not ASN.1 hex string";try{r=s(e,0,[0,t,0,1],"06"),n=s(e,0,[0,t,1],"03").substr(2)}catch(e){throw"malformed X.509 certificate ECC public key"}if(this.curveName=o(r),null===this.curveName)throw"unsupported curve name";this.setNamedCurve(this.curveName),this.setPublicKeyHex(n)},void 0!==e&&void 0!==e.curve&&(this.curveName=e.curve),void 0===this.curveName&&(this.curveName="secp256r1"),this.setNamedCurve(this.curveName),void 0!==e&&(void 0!==e.prv&&this.setPrivateKeyHex(e.prv),void 0!==e.pub&&this.setPublicKeyHex(e.pub))},K.crypto.ECDSA.parseSigHex=function(e){var t=K.crypto.ECDSA.parseSigHexInHexRS(e);return{r:new BigInteger(t.r,16),s:new BigInteger(t.s,16)}},K.crypto.ECDSA.parseSigHexInHexRS=function(e){var t=J,r=t.getChildIdx,n=t.getV;if("30"!=e.substr(0,2))throw"signature is not a ASN.1 sequence";var i=r(e,0);if(2!=i.length)throw"number of signature ASN.1 sequence elements seem wrong";var o=i[0],s=i[1];if("02"!=e.substr(o,2))throw"1st item of sequene of signature is not ASN.1 integer";if("02"!=e.substr(s,2))throw"2nd item of sequene of signature is not ASN.1 integer";return{r:n(e,o),s:n(e,s)}},K.crypto.ECDSA.asn1SigToConcatSig=function(e){var t=K.crypto.ECDSA.parseSigHexInHexRS(e),r=t.r,n=t.s;if("00"==r.substr(0,2)&&r.length%32==2&&(r=r.substr(2)),"00"==n.substr(0,2)&&n.length%32==2&&(n=n.substr(2)),r.length%32==30&&(r="00"+r),n.length%32==30&&(n="00"+n),r.length%32!=0)throw"unknown ECDSA sig r length error";if(n.length%32!=0)throw"unknown ECDSA sig s length error";return r+n},K.crypto.ECDSA.concatSigToASN1Sig=function(e){if(e.length/2*8%128!=0)throw"unknown ECDSA concatinated r-s sig  length error";var t=e.substr(0,e.length/2),r=e.substr(e.length/2);return K.crypto.ECDSA.hexRSSigToASN1Sig(t,r)},K.crypto.ECDSA.hexRSSigToASN1Sig=function(e,t){var r=new BigInteger(e,16),n=new BigInteger(t,16);return K.crypto.ECDSA.biRSSigToASN1Sig(r,n)},K.crypto.ECDSA.biRSSigToASN1Sig=function(e,t){var r=K.asn1,n=new r.DERInteger({bigint:e}),i=new r.DERInteger({bigint:t});return new r.DERSequence({array:[n,i]}).getEncodedHex()},K.crypto.ECDSA.getName=function(e){return"2a8648ce3d030107"===e?"secp256r1":"2b8104000a"===e?"secp256k1":"2b81040022"===e?"secp384r1":-1!=="|secp256r1|NIST P-256|P-256|prime256v1|".indexOf(e)?"secp256r1":-1!=="|secp256k1|".indexOf(e)?"secp256k1":-1!=="|secp384r1|NIST P-384|P-384|".indexOf(e)?"secp384r1":null},void 0!==K&&K||(K={}),void 0!==K.crypto&&K.crypto||(K.crypto={}),K.crypto.ECParameterDB=new function(){var e={},t={};function a(e){return new BigInteger(e,16)}this.getByName=function(r){var n=r;if(void 0!==t[n]&&(n=t[r]),void 0!==e[n])return e[n];throw"unregistered EC curve name: "+n},this.regist=function(r,n,i,o,s,u,c,h,f,l,g,p){e[r]={};var d=a(i),v=a(o),y=a(s),m=a(u),S=a(c),F=new ECCurveFp(d,v,y),b=F.decodePointHex("04"+h+f);e[r].name=r,e[r].keylen=n,e[r].curve=F,e[r].G=b,e[r].n=m,e[r].h=S,e[r].oid=g,e[r].info=p;for(var _=0;_<l.length;_++)t[l[_]]=r}},K.crypto.ECParameterDB.regist("secp128r1",128,"FFFFFFFDFFFFFFFFFFFFFFFFFFFFFFFF","FFFFFFFDFFFFFFFFFFFFFFFFFFFFFFFC","E87579C11079F43DD824993C2CEE5ED3","FFFFFFFE0000000075A30D1B9038A115","1","161FF7528B899B2D0C28607CA52C5B86","CF5AC8395BAFEB13C02DA292DDED7A83",[],"","secp128r1 : SECG curve over a 128 bit prime field"),K.crypto.ECParameterDB.regist("secp160k1",160,"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFAC73","0","7","0100000000000000000001B8FA16DFAB9ACA16B6B3","1","3B4C382CE37AA192A4019E763036F4F5DD4D7EBB","938CF935318FDCED6BC28286531733C3F03C4FEE",[],"","secp160k1 : SECG curve over a 160 bit prime field"),K.crypto.ECParameterDB.regist("secp160r1",160,"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7FFFFFFF","FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7FFFFFFC","1C97BEFC54BD7A8B65ACF89F81D4D4ADC565FA45","0100000000000000000001F4C8F927AED3CA752257","1","4A96B5688EF573284664698968C38BB913CBFC82","23A628553168947D59DCC912042351377AC5FB32",[],"","secp160r1 : SECG curve over a 160 bit prime field"),K.crypto.ECParameterDB.regist("secp192k1",192,"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFEE37","0","3","FFFFFFFFFFFFFFFFFFFFFFFE26F2FC170F69466A74DEFD8D","1","DB4FF10EC057E9AE26B07D0280B7F4341DA5D1B1EAE06C7D","9B2F2F6D9C5628A7844163D015BE86344082AA88D95E2F9D",[]),K.crypto.ECParameterDB.regist("secp192r1",192,"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFF","FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFC","64210519E59C80E70FA7E9AB72243049FEB8DEECC146B9B1","FFFFFFFFFFFFFFFFFFFFFFFF99DEF836146BC9B1B4D22831","1","188DA80EB03090F67CBF20EB43A18800F4FF0AFD82FF1012","07192B95FFC8DA78631011ED6B24CDD573F977A11E794811",[]),K.crypto.ECParameterDB.regist("secp224r1",224,"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF000000000000000000000001","FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFE","B4050A850C04B3ABF54132565044B0B7D7BFD8BA270B39432355FFB4","FFFFFFFFFFFFFFFFFFFFFFFFFFFF16A2E0B8F03E13DD29455C5C2A3D","1","B70E0CBD6BB4BF7F321390B94A03C1D356C21122343280D6115C1D21","BD376388B5F723FB4C22DFE6CD4375A05A07476444D5819985007E34",[]),K.crypto.ECParameterDB.regist("secp256k1",256,"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F","0","7","FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141","1","79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798","483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8",[]),K.crypto.ECParameterDB.regist("secp256r1",256,"FFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF","FFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFC","5AC635D8AA3A93E7B3EBBD55769886BC651D06B0CC53B0F63BCE3C3E27D2604B","FFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551","1","6B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296","4FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5",["NIST P-256","P-256","prime256v1"]),K.crypto.ECParameterDB.regist("secp384r1",384,"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFF0000000000000000FFFFFFFF","FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFF0000000000000000FFFFFFFC","B3312FA7E23EE7E4988E056BE3F82D19181D9C6EFE8141120314088F5013875AC656398D8A2ED19D2A85C8EDD3EC2AEF","FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC7634D81F4372DDF581A0DB248B0A77AECEC196ACCC52973","1","AA87CA22BE8B05378EB1C71EF320AD746E1D3B628BA79B9859F741E082542A385502F25DBF55296C3A545E3872760AB7","3617de4a96262c6f5d9e98bf9292dc29f8f41dbd289a147ce9da3113b5f0b8c00a60b1ce1d7e819d7a431d7c90ea0e5f",["NIST P-384","P-384"]),K.crypto.ECParameterDB.regist("secp521r1",521,"1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF","1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC","051953EB9618E1C9A1F929A21A0B68540EEA2DA725B99B315F3B8B489918EF109E156193951EC7E937B1652C0BD3BB1BF073573DF883D2C34F1EF451FD46B503F00","1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFA51868783BF2F966B7FCC0148F709A5D03BB5C9B8899C47AEBB6FB71E91386409","1","C6858E06B70404E9CD9E3ECB662395B4429C648139053FB521F828AF606B4D3DBAA14B5E77EFE75928FE1DC127A2FFA8DE3348B3C1856A429BF97E7E31C2E5BD66","011839296a789a3bc0045c8a5fb42c7d1bd998f54449579b446817afbd17273e662c97ee72995ef42640c550b9013fad0761353c7086a272c24088be94769fd16650",["NIST P-521","P-521"]);var z=function(){var t=function d(e,t,n){return r(y.AES,e,t,n)},r=function k(e,t,r,n){var i=y.enc.Hex.parse(t),o=y.enc.Hex.parse(r),s=y.enc.Hex.parse(n),a={};a.key=o,a.iv=s,a.ciphertext=i;var u=e.decrypt(a,o,{iv:s});return y.enc.Hex.stringify(u)},n=function l(e,t,r){return i(y.AES,e,t,r)},i=function g(e,t,r,n){var i=y.enc.Hex.parse(t),o=y.enc.Hex.parse(r),s=y.enc.Hex.parse(n),a=e.encrypt(i,o,{iv:s}),u=y.enc.Hex.parse(a.toString());return y.enc.Base64.stringify(u)},s={"AES-256-CBC":{proc:t,eproc:n,keylen:32,ivlen:16},"AES-192-CBC":{proc:t,eproc:n,keylen:24,ivlen:16},"AES-128-CBC":{proc:t,eproc:n,keylen:16,ivlen:16},"DES-EDE3-CBC":{proc:function e(t,n,i){return r(y.TripleDES,t,n,i)},eproc:function o(e,t,r){return i(y.TripleDES,e,t,r)},keylen:24,ivlen:8},"DES-CBC":{proc:function a(e,t,n){return r(y.DES,e,t,n)},eproc:function f(e,t,r){return i(y.DES,e,t,r)},keylen:8,ivlen:8}},u=function n(e){var t={},r=e.match(new RegExp("DEK-Info: ([^,]+),([0-9A-Fa-f]+)","m"));r&&(t.cipher=r[1],t.ivsalt=r[2]);var i=e.match(new RegExp("-----BEGIN ([A-Z]+) PRIVATE KEY-----"));i&&(t.type=i[1]);var o=-1,s=0;-1!=e.indexOf("\r\n\r\n")&&(o=e.indexOf("\r\n\r\n"),s=2),-1!=e.indexOf("\n\n")&&(o=e.indexOf("\n\n"),s=1);var a=e.indexOf("-----END");if(-1!=o&&-1!=a){var u=e.substring(o+2*s,a-s);u=u.replace(/\s+/g,""),t.data=u}return t},c=function j(e,t,r){for(var n=r.substring(0,16),i=y.enc.Hex.parse(n),o=y.enc.Utf8.parse(t),a=s[e].keylen+s[e].ivlen,u="",c=null;;){var h=y.algo.MD5.create();if(null!=c&&h.update(c),h.update(o),h.update(i),c=h.finalize(),(u+=y.enc.Hex.stringify(c)).length>=2*a)break}var f={};return f.keyhex=u.substr(0,2*s[e].keylen),f.ivhex=u.substr(2*s[e].keylen,2*s[e].ivlen),f},g=function b(e,t,r,n){var i=y.enc.Base64.parse(e),o=y.enc.Hex.stringify(i);return(0,s[t].proc)(o,r,n)};return{version:"1.0.0",parsePKCS5PEM:function parsePKCS5PEM(e){return u(e)},getKeyAndUnusedIvByPasscodeAndIvsalt:function getKeyAndUnusedIvByPasscodeAndIvsalt(e,t,r){return c(e,t,r)},decryptKeyB64:function decryptKeyB64(e,t,r,n){return g(e,t,r,n)},getDecryptedKeyHex:function getDecryptedKeyHex(e,t){var r=u(e),n=(r.type,r.cipher),i=r.ivsalt,o=r.data,s=c(n,t,i).keyhex;return g(o,n,s,i)},getEncryptedPKCS5PEMFromPrvKeyHex:function getEncryptedPKCS5PEMFromPrvKeyHex(e,t,r,n,i){var o="";if(void 0!==n&&null!=n||(n="AES-256-CBC"),void 0===s[n])throw"KEYUTIL unsupported algorithm: "+n;void 0!==i&&null!=i||(i=function m(e){var t=y.lib.WordArray.random(e);return y.enc.Hex.stringify(t)}(s[n].ivlen).toUpperCase());var a=function h(e,t,r,n){return(0,s[t].eproc)(e,r,n)}(t,n,c(n,r,i).keyhex,i);o="-----BEGIN "+e+" PRIVATE KEY-----\r\n";return o+="Proc-Type: 4,ENCRYPTED\r\n",o+="DEK-Info: "+n+","+i+"\r\n",o+="\r\n",o+=a.replace(/(.{64})/g,"$1\r\n"),o+="\r\n-----END "+e+" PRIVATE KEY-----\r\n"},parseHexOfEncryptedPKCS8:function parseHexOfEncryptedPKCS8(e){var t=J,r=t.getChildIdx,n=t.getV,i={},o=r(e,0);if(2!=o.length)throw"malformed format: SEQUENCE(0).items != 2: "+o.length;i.ciphertext=n(e,o[1]);var s=r(e,o[0]);if(2!=s.length)throw"malformed format: SEQUENCE(0.0).items != 2: "+s.length;if("2a864886f70d01050d"!=n(e,s[0]))throw"this only supports pkcs5PBES2";var a=r(e,s[1]);if(2!=s.length)throw"malformed format: SEQUENCE(0.0.1).items != 2: "+a.length;var u=r(e,a[1]);if(2!=u.length)throw"malformed format: SEQUENCE(0.0.1.1).items != 2: "+u.length;if("2a864886f70d0307"!=n(e,u[0]))throw"this only supports TripleDES";i.encryptionSchemeAlg="TripleDES",i.encryptionSchemeIV=n(e,u[1]);var c=r(e,a[0]);if(2!=c.length)throw"malformed format: SEQUENCE(0.0.1.0).items != 2: "+c.length;if("2a864886f70d01050c"!=n(e,c[0]))throw"this only supports pkcs5PBKDF2";var h=r(e,c[1]);if(h.length<2)throw"malformed format: SEQUENCE(0.0.1.0.1).items < 2: "+h.length;i.pbkdf2Salt=n(e,h[0]);var f=n(e,h[1]);try{i.pbkdf2Iter=parseInt(f,16)}catch(e){throw"malformed format pbkdf2Iter: "+f}return i},getPBKDF2KeyHexFromParam:function getPBKDF2KeyHexFromParam(e,t){var r=y.enc.Hex.parse(e.pbkdf2Salt),n=e.pbkdf2Iter,i=y.PBKDF2(t,r,{keySize:6,iterations:n});return y.enc.Hex.stringify(i)},_getPlainPKCS8HexFromEncryptedPKCS8PEM:function _getPlainPKCS8HexFromEncryptedPKCS8PEM(e,t){var r=pemtohex(e,"ENCRYPTED PRIVATE KEY"),n=this.parseHexOfEncryptedPKCS8(r),i=z.getPBKDF2KeyHexFromParam(n,t),o={};o.ciphertext=y.enc.Hex.parse(n.ciphertext);var s=y.enc.Hex.parse(i),a=y.enc.Hex.parse(n.encryptionSchemeIV),u=y.TripleDES.decrypt(o,s,{iv:a});return y.enc.Hex.stringify(u)},getKeyFromEncryptedPKCS8PEM:function getKeyFromEncryptedPKCS8PEM(e,t){var r=this._getPlainPKCS8HexFromEncryptedPKCS8PEM(e,t);return this.getKeyFromPlainPrivatePKCS8Hex(r)},parsePlainPrivatePKCS8Hex:function parsePlainPrivatePKCS8Hex(e){var t=J,r=t.getChildIdx,n=t.getV,i={algparam:null};if("30"!=e.substr(0,2))throw"malformed plain PKCS8 private key(code:001)";var o=r(e,0);if(3!=o.length)throw"malformed plain PKCS8 private key(code:002)";if("30"!=e.substr(o[1],2))throw"malformed PKCS8 private key(code:003)";var s=r(e,o[1]);if(2!=s.length)throw"malformed PKCS8 private key(code:004)";if("06"!=e.substr(s[0],2))throw"malformed PKCS8 private key(code:005)";if(i.algoid=n(e,s[0]),"06"==e.substr(s[1],2)&&(i.algparam=n(e,s[1])),"04"!=e.substr(o[2],2))throw"malformed PKCS8 private key(code:006)";return i.keyidx=t.getVidx(e,o[2]),i},getKeyFromPlainPrivatePKCS8PEM:function getKeyFromPlainPrivatePKCS8PEM(e){var t=pemtohex(e,"PRIVATE KEY");return this.getKeyFromPlainPrivatePKCS8Hex(t)},getKeyFromPlainPrivatePKCS8Hex:function getKeyFromPlainPrivatePKCS8Hex(e){var t,r=this.parsePlainPrivatePKCS8Hex(e);if("2a864886f70d010101"==r.algoid)t=new RSAKey;else if("2a8648ce380401"==r.algoid)t=new K.crypto.DSA;else{if("2a8648ce3d0201"!=r.algoid)throw"unsupported private key algorithm";t=new K.crypto.ECDSA}return t.readPKCS8PrvKeyHex(e),t},_getKeyFromPublicPKCS8Hex:function _getKeyFromPublicPKCS8Hex(e){var t,r=J.getVbyList(e,0,[0,0],"06");if("2a864886f70d010101"===r)t=new RSAKey;else if("2a8648ce380401"===r)t=new K.crypto.DSA;else{if("2a8648ce3d0201"!==r)throw"unsupported PKCS#8 public key hex";t=new K.crypto.ECDSA}return t.readPKCS8PubKeyHex(e),t},parsePublicRawRSAKeyHex:function parsePublicRawRSAKeyHex(e){var t=J,r=t.getChildIdx,n=t.getV,i={};if("30"!=e.substr(0,2))throw"malformed RSA key(code:001)";var o=r(e,0);if(2!=o.length)throw"malformed RSA key(code:002)";if("02"!=e.substr(o[0],2))throw"malformed RSA key(code:003)";if(i.n=n(e,o[0]),"02"!=e.substr(o[1],2))throw"malformed RSA key(code:004)";return i.e=n(e,o[1]),i},parsePublicPKCS8Hex:function parsePublicPKCS8Hex(e){var t=J,r=t.getChildIdx,n=t.getV,i={algparam:null},o=r(e,0);if(2!=o.length)throw"outer DERSequence shall have 2 elements: "+o.length;var s=o[0];if("30"!=e.substr(s,2))throw"malformed PKCS8 public key(code:001)";var a=r(e,s);if(2!=a.length)throw"malformed PKCS8 public key(code:002)";if("06"!=e.substr(a[0],2))throw"malformed PKCS8 public key(code:003)";if(i.algoid=n(e,a[0]),"06"==e.substr(a[1],2)?i.algparam=n(e,a[1]):"30"==e.substr(a[1],2)&&(i.algparam={},i.algparam.p=t.getVbyList(e,a[1],[0],"02"),i.algparam.q=t.getVbyList(e,a[1],[1],"02"),i.algparam.g=t.getVbyList(e,a[1],[2],"02")),"03"!=e.substr(o[1],2))throw"malformed PKCS8 public key(code:004)";return i.key=n(e,o[1]).substr(2),i}}}();z.getKey=function(e,t,r){var n=(v=J).getChildIdx,i=(v.getV,v.getVbyList),o=K.crypto,s=o.ECDSA,a=o.DSA,u=RSAKey,c=pemtohex,h=z;if(void 0!==u&&e instanceof u)return e;if(void 0!==s&&e instanceof s)return e;if(void 0!==a&&e instanceof a)return e;if(void 0!==e.curve&&void 0!==e.xy&&void 0===e.d)return new s({pub:e.xy,curve:e.curve});if(void 0!==e.curve&&void 0!==e.d)return new s({prv:e.d,curve:e.curve});if(void 0===e.kty&&void 0!==e.n&&void 0!==e.e&&void 0===e.d)return(P=new u).setPublic(e.n,e.e),P;if(void 0===e.kty&&void 0!==e.n&&void 0!==e.e&&void 0!==e.d&&void 0!==e.p&&void 0!==e.q&&void 0!==e.dp&&void 0!==e.dq&&void 0!==e.co&&void 0===e.qi)return(P=new u).setPrivateEx(e.n,e.e,e.d,e.p,e.q,e.dp,e.dq,e.co),P;if(void 0===e.kty&&void 0!==e.n&&void 0!==e.e&&void 0!==e.d&&void 0===e.p)return(P=new u).setPrivate(e.n,e.e,e.d),P;if(void 0!==e.p&&void 0!==e.q&&void 0!==e.g&&void 0!==e.y&&void 0===e.x)return(P=new a).setPublic(e.p,e.q,e.g,e.y),P;if(void 0!==e.p&&void 0!==e.q&&void 0!==e.g&&void 0!==e.y&&void 0!==e.x)return(P=new a).setPrivate(e.p,e.q,e.g,e.y,e.x),P;if("RSA"===e.kty&&void 0!==e.n&&void 0!==e.e&&void 0===e.d)return(P=new u).setPublic(b64utohex(e.n),b64utohex(e.e)),P;if("RSA"===e.kty&&void 0!==e.n&&void 0!==e.e&&void 0!==e.d&&void 0!==e.p&&void 0!==e.q&&void 0!==e.dp&&void 0!==e.dq&&void 0!==e.qi)return(P=new u).setPrivateEx(b64utohex(e.n),b64utohex(e.e),b64utohex(e.d),b64utohex(e.p),b64utohex(e.q),b64utohex(e.dp),b64utohex(e.dq),b64utohex(e.qi)),P;if("RSA"===e.kty&&void 0!==e.n&&void 0!==e.e&&void 0!==e.d)return(P=new u).setPrivate(b64utohex(e.n),b64utohex(e.e),b64utohex(e.d)),P;if("EC"===e.kty&&void 0!==e.crv&&void 0!==e.x&&void 0!==e.y&&void 0===e.d){var f=(C=new s({curve:e.crv})).ecparams.keylen/4,l="04"+("0000000000"+b64utohex(e.x)).slice(-f)+("0000000000"+b64utohex(e.y)).slice(-f);return C.setPublicKeyHex(l),C}if("EC"===e.kty&&void 0!==e.crv&&void 0!==e.x&&void 0!==e.y&&void 0!==e.d){f=(C=new s({curve:e.crv})).ecparams.keylen/4,l="04"+("0000000000"+b64utohex(e.x)).slice(-f)+("0000000000"+b64utohex(e.y)).slice(-f);var g=("0000000000"+b64utohex(e.d)).slice(-f);return C.setPublicKeyHex(l),C.setPrivateKeyHex(g),C}if("pkcs5prv"===r){var p,d=e,v=J;if(9===(p=n(d,0)).length)(P=new u).readPKCS5PrvKeyHex(d);else if(6===p.length)(P=new a).readPKCS5PrvKeyHex(d);else{if(!(p.length>2&&"04"===d.substr(p[1],2)))throw"unsupported PKCS#1/5 hexadecimal key";(P=new s).readPKCS5PrvKeyHex(d)}return P}if("pkcs8prv"===r)return P=h.getKeyFromPlainPrivatePKCS8Hex(e);if("pkcs8pub"===r)return h._getKeyFromPublicPKCS8Hex(e);if("x509pub"===r)return X509.getPublicKeyFromCertHex(e);if(-1!=e.indexOf("-END CERTIFICATE-",0)||-1!=e.indexOf("-END X509 CERTIFICATE-",0)||-1!=e.indexOf("-END TRUSTED CERTIFICATE-",0))return X509.getPublicKeyFromCertPEM(e);if(-1!=e.indexOf("-END PUBLIC KEY-")){var y=pemtohex(e,"PUBLIC KEY");return h._getKeyFromPublicPKCS8Hex(y)}if(-1!=e.indexOf("-END RSA PRIVATE KEY-")&&-1==e.indexOf("4,ENCRYPTED")){var m=c(e,"RSA PRIVATE KEY");return h.getKey(m,null,"pkcs5prv")}if(-1!=e.indexOf("-END DSA PRIVATE KEY-")&&-1==e.indexOf("4,ENCRYPTED")){var S=i(I=c(e,"DSA PRIVATE KEY"),0,[1],"02"),F=i(I,0,[2],"02"),b=i(I,0,[3],"02"),_=i(I,0,[4],"02"),w=i(I,0,[5],"02");return(P=new a).setPrivate(new BigInteger(S,16),new BigInteger(F,16),new BigInteger(b,16),new BigInteger(_,16),new BigInteger(w,16)),P}if(-1!=e.indexOf("-END PRIVATE KEY-"))return h.getKeyFromPlainPrivatePKCS8PEM(e);if(-1!=e.indexOf("-END RSA PRIVATE KEY-")&&-1!=e.indexOf("4,ENCRYPTED")){var E=h.getDecryptedKeyHex(e,t),x=new RSAKey;return x.readPKCS5PrvKeyHex(E),x}if(-1!=e.indexOf("-END EC PRIVATE KEY-")&&-1!=e.indexOf("4,ENCRYPTED")){var C,P=i(I=h.getDecryptedKeyHex(e,t),0,[1],"04"),A=i(I,0,[2,0],"06"),k=i(I,0,[3,0],"03").substr(2);if(void 0===K.crypto.OID.oidhex2name[A])throw"undefined OID(hex) in KJUR.crypto.OID: "+A;return(C=new s({curve:K.crypto.OID.oidhex2name[A]})).setPublicKeyHex(k),C.setPrivateKeyHex(P),C.isPublic=!1,C}if(-1!=e.indexOf("-END DSA PRIVATE KEY-")&&-1!=e.indexOf("4,ENCRYPTED")){var I;S=i(I=h.getDecryptedKeyHex(e,t),0,[1],"02"),F=i(I,0,[2],"02"),b=i(I,0,[3],"02"),_=i(I,0,[4],"02"),w=i(I,0,[5],"02");return(P=new a).setPrivate(new BigInteger(S,16),new BigInteger(F,16),new BigInteger(b,16),new BigInteger(_,16),new BigInteger(w,16)),P}if(-1!=e.indexOf("-END ENCRYPTED PRIVATE KEY-"))return h.getKeyFromEncryptedPKCS8PEM(e,t);throw"not supported argument"},z.generateKeypair=function(e,t){if("RSA"==e){var r=t;(s=new RSAKey).generate(r,"10001"),s.isPrivate=!0,s.isPublic=!0;var n=new RSAKey,i=s.n.toString(16),o=s.e.toString(16);return n.setPublic(i,o),n.isPrivate=!1,n.isPublic=!0,(a={}).prvKeyObj=s,a.pubKeyObj=n,a}if("EC"==e){var s,a,u=t,c=new K.crypto.ECDSA({curve:u}).generateKeyPairHex();return(s=new K.crypto.ECDSA({curve:u})).setPublicKeyHex(c.ecpubhex),s.setPrivateKeyHex(c.ecprvhex),s.isPrivate=!0,s.isPublic=!1,(n=new K.crypto.ECDSA({curve:u})).setPublicKeyHex(c.ecpubhex),n.isPrivate=!1,n.isPublic=!0,(a={}).prvKeyObj=s,a.pubKeyObj=n,a}throw"unknown algorithm: "+e},z.getPEM=function(e,t,r,n,i,s){var a=K,u=a.asn1,c=u.DERObjectIdentifier,h=u.DERInteger,f=u.ASN1Util.newObject,l=u.x509.SubjectPublicKeyInfo,g=a.crypto,p=g.DSA,d=g.ECDSA,v=RSAKey;function A(e){return f({seq:[{int:0},{int:{bigint:e.n}},{int:e.e},{int:{bigint:e.d}},{int:{bigint:e.p}},{int:{bigint:e.q}},{int:{bigint:e.dmp1}},{int:{bigint:e.dmq1}},{int:{bigint:e.coeff}}]})}function B(e){return f({seq:[{int:1},{octstr:{hex:e.prvKeyHex}},{tag:["a0",!0,{oid:{name:e.curveName}}]},{tag:["a1",!0,{bitstr:{hex:"00"+e.pubKeyHex}}]}]})}function x(e){return f({seq:[{int:0},{int:{bigint:e.p}},{int:{bigint:e.q}},{int:{bigint:e.g}},{int:{bigint:e.y}},{int:{bigint:e.x}}]})}if((void 0!==v&&e instanceof v||void 0!==p&&e instanceof p||void 0!==d&&e instanceof d)&&1==e.isPublic&&(void 0===t||"PKCS8PUB"==t))return hextopem(b=new l(e).getEncodedHex(),"PUBLIC KEY");if("PKCS1PRV"==t&&void 0!==v&&e instanceof v&&(void 0===r||null==r)&&1==e.isPrivate)return hextopem(b=A(e).getEncodedHex(),"RSA PRIVATE KEY");if("PKCS1PRV"==t&&void 0!==d&&e instanceof d&&(void 0===r||null==r)&&1==e.isPrivate){var m=new c({name:e.curveName}).getEncodedHex(),S=B(e).getEncodedHex(),F="";return F+=hextopem(m,"EC PARAMETERS"),F+=hextopem(S,"EC PRIVATE KEY")}if("PKCS1PRV"==t&&void 0!==p&&e instanceof p&&(void 0===r||null==r)&&1==e.isPrivate)return hextopem(b=x(e).getEncodedHex(),"DSA PRIVATE KEY");if("PKCS5PRV"==t&&void 0!==v&&e instanceof v&&void 0!==r&&null!=r&&1==e.isPrivate){var b=A(e).getEncodedHex();return void 0===n&&(n="DES-EDE3-CBC"),this.getEncryptedPKCS5PEMFromPrvKeyHex("RSA",b,r,n,s)}if("PKCS5PRV"==t&&void 0!==d&&e instanceof d&&void 0!==r&&null!=r&&1==e.isPrivate){b=B(e).getEncodedHex();return void 0===n&&(n="DES-EDE3-CBC"),this.getEncryptedPKCS5PEMFromPrvKeyHex("EC",b,r,n,s)}if("PKCS5PRV"==t&&void 0!==p&&e instanceof p&&void 0!==r&&null!=r&&1==e.isPrivate){b=x(e).getEncodedHex();return void 0===n&&(n="DES-EDE3-CBC"),this.getEncryptedPKCS5PEMFromPrvKeyHex("DSA",b,r,n,s)}var _=function o(e,t){var r=w(e,t);return new f({seq:[{seq:[{oid:{name:"pkcs5PBES2"}},{seq:[{seq:[{oid:{name:"pkcs5PBKDF2"}},{seq:[{octstr:{hex:r.pbkdf2Salt}},{int:r.pbkdf2Iter}]}]},{seq:[{oid:{name:"des-EDE3-CBC"}},{octstr:{hex:r.encryptionSchemeIV}}]}]}]},{octstr:{hex:r.ciphertext}}]}).getEncodedHex()},w=function c(e,t){var r=y.lib.WordArray.random(8),n=y.lib.WordArray.random(8),i=y.PBKDF2(t,r,{keySize:6,iterations:100}),o=y.enc.Hex.parse(e),s=y.TripleDES.encrypt(o,i,{iv:n})+"",a={};return a.ciphertext=s,a.pbkdf2Salt=y.enc.Hex.stringify(r),a.pbkdf2Iter=100,a.encryptionSchemeAlg="DES-EDE3-CBC",a.encryptionSchemeIV=y.enc.Hex.stringify(n),a};if("PKCS8PRV"==t&&void 0!=v&&e instanceof v&&1==e.isPrivate){var E=A(e).getEncodedHex();b=f({seq:[{int:0},{seq:[{oid:{name:"rsaEncryption"}},{null:!0}]},{octstr:{hex:E}}]}).getEncodedHex();return void 0===r||null==r?hextopem(b,"PRIVATE KEY"):hextopem(S=_(b,r),"ENCRYPTED PRIVATE KEY")}if("PKCS8PRV"==t&&void 0!==d&&e instanceof d&&1==e.isPrivate){E=new f({seq:[{int:1},{octstr:{hex:e.prvKeyHex}},{tag:["a1",!0,{bitstr:{hex:"00"+e.pubKeyHex}}]}]}).getEncodedHex(),b=f({seq:[{int:0},{seq:[{oid:{name:"ecPublicKey"}},{oid:{name:e.curveName}}]},{octstr:{hex:E}}]}).getEncodedHex();return void 0===r||null==r?hextopem(b,"PRIVATE KEY"):hextopem(S=_(b,r),"ENCRYPTED PRIVATE KEY")}if("PKCS8PRV"==t&&void 0!==p&&e instanceof p&&1==e.isPrivate){E=new h({bigint:e.x}).getEncodedHex(),b=f({seq:[{int:0},{seq:[{oid:{name:"dsa"}},{seq:[{int:{bigint:e.p}},{int:{bigint:e.q}},{int:{bigint:e.g}}]}]},{octstr:{hex:E}}]}).getEncodedHex();return void 0===r||null==r?hextopem(b,"PRIVATE KEY"):hextopem(S=_(b,r),"ENCRYPTED PRIVATE KEY")}throw"unsupported object nor format"},z.getKeyFromCSRPEM=function(e){var t=pemtohex(e,"CERTIFICATE REQUEST");return z.getKeyFromCSRHex(t)},z.getKeyFromCSRHex=function(e){var t=z.parseCSRHex(e);return z.getKey(t.p8pubkeyhex,null,"pkcs8pub")},z.parseCSRHex=function(e){var t=J,r=t.getChildIdx,n=t.getTLV,i={},o=e;if("30"!=o.substr(0,2))throw"malformed CSR(code:001)";var s=r(o,0);if(s.length<1)throw"malformed CSR(code:002)";if("30"!=o.substr(s[0],2))throw"malformed CSR(code:003)";var a=r(o,s[0]);if(a.length<3)throw"malformed CSR(code:004)";return i.p8pubkeyhex=n(o,a[2]),i},z.getJWKFromKey=function(e){var t={};if(e instanceof RSAKey&&e.isPrivate)return t.kty="RSA",t.n=hextob64u(e.n.toString(16)),t.e=hextob64u(e.e.toString(16)),t.d=hextob64u(e.d.toString(16)),t.p=hextob64u(e.p.toString(16)),t.q=hextob64u(e.q.toString(16)),t.dp=hextob64u(e.dmp1.toString(16)),t.dq=hextob64u(e.dmq1.toString(16)),t.qi=hextob64u(e.coeff.toString(16)),t;if(e instanceof RSAKey&&e.isPublic)return t.kty="RSA",t.n=hextob64u(e.n.toString(16)),t.e=hextob64u(e.e.toString(16)),t;if(e instanceof K.crypto.ECDSA&&e.isPrivate){if("P-256"!==(n=e.getShortNISTPCurveName())&&"P-384"!==n)throw"unsupported curve name for JWT: "+n;var r=e.getPublicKeyXYHex();return t.kty="EC",t.crv=n,t.x=hextob64u(r.x),t.y=hextob64u(r.y),t.d=hextob64u(e.prvKeyHex),t}if(e instanceof K.crypto.ECDSA&&e.isPublic){var n;if("P-256"!==(n=e.getShortNISTPCurveName())&&"P-384"!==n)throw"unsupported curve name for JWT: "+n;r=e.getPublicKeyXYHex();return t.kty="EC",t.crv=n,t.x=hextob64u(r.x),t.y=hextob64u(r.y),t}throw"not supported key object"},RSAKey.getPosArrayOfChildrenFromHex=function(e){return J.getChildIdx(e,0)},RSAKey.getHexValueArrayOfChildrenFromHex=function(e){var t,r=J.getV,n=r(e,(t=RSAKey.getPosArrayOfChildrenFromHex(e))[0]),i=r(e,t[1]),o=r(e,t[2]),s=r(e,t[3]),a=r(e,t[4]),u=r(e,t[5]),c=r(e,t[6]),h=r(e,t[7]),f=r(e,t[8]);return(t=new Array).push(n,i,o,s,a,u,c,h,f),t},RSAKey.prototype.readPrivateKeyFromPEMString=function(e){var t=pemtohex(e),r=RSAKey.getHexValueArrayOfChildrenFromHex(t);this.setPrivateEx(r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8])},RSAKey.prototype.readPKCS5PrvKeyHex=function(e){var t=RSAKey.getHexValueArrayOfChildrenFromHex(e);this.setPrivateEx(t[1],t[2],t[3],t[4],t[5],t[6],t[7],t[8])},RSAKey.prototype.readPKCS8PrvKeyHex=function(e){var t,r,n,i,o,s,a,u,c=J,h=c.getVbyList;if(!1===c.isASN1HEX(e))throw"not ASN.1 hex string";try{t=h(e,0,[2,0,1],"02"),r=h(e,0,[2,0,2],"02"),n=h(e,0,[2,0,3],"02"),i=h(e,0,[2,0,4],"02"),o=h(e,0,[2,0,5],"02"),s=h(e,0,[2,0,6],"02"),a=h(e,0,[2,0,7],"02"),u=h(e,0,[2,0,8],"02")}catch(e){throw"malformed PKCS#8 plain RSA private key"}this.setPrivateEx(t,r,n,i,o,s,a,u)},RSAKey.prototype.readPKCS5PubKeyHex=function(e){var t=J,r=t.getV;if(!1===t.isASN1HEX(e))throw"keyHex is not ASN.1 hex string";var n=t.getChildIdx(e,0);if(2!==n.length||"02"!==e.substr(n[0],2)||"02"!==e.substr(n[1],2))throw"wrong hex for PKCS#5 public key";var i=r(e,n[0]),o=r(e,n[1]);this.setPublic(i,o)},RSAKey.prototype.readPKCS8PubKeyHex=function(e){var t=J;if(!1===t.isASN1HEX(e))throw"not ASN.1 hex string";if("06092a864886f70d010101"!==t.getTLVbyList(e,0,[0,0]))throw"not PKCS8 RSA public key";var r=t.getTLVbyList(e,0,[1,0]);this.readPKCS5PubKeyHex(r)},RSAKey.prototype.readCertPubKeyHex=function(e,t){var r,n;(r=new X509).readCertHex(e),n=r.getPublicKeyHex(),this.readPKCS8PubKeyHex(n)};var Y=new RegExp("");function _zeroPaddingOfSignature(e,t){for(var r="",n=t/4-e.length,i=0;i<n;i++)r+="0";return r+e}function pss_mgf1_str(e,t,r){for(var n="",i=0;n.length<t;)n+=hextorstr(r(rstrtohex(e+String.fromCharCode.apply(String,[(4278190080&i)>>24,(16711680&i)>>16,(65280&i)>>8,255&i])))),i+=1;return n}function _rsasign_getAlgNameAndHashFromHexDisgestInfo(e){for(var t in K.crypto.Util.DIGESTINFOHEAD){var r=K.crypto.Util.DIGESTINFOHEAD[t],n=r.length;if(e.substring(0,n)==r)return[t,e.substring(n)]}return[]}function X509(){var e=J,t=e.getChildIdx,r=e.getV,n=e.getTLV,i=e.getVbyList,o=e.getTLVbyList,s=e.getIdxbyList,a=e.getVidx,u=e.oidname,c=X509,h=pemtohex;this.hex=null,this.version=0,this.foffset=0,this.aExtInfo=null,this.getVersion=function(){return null===this.hex||0!==this.version?this.version:"a003020102"!==o(this.hex,0,[0,0])?(this.version=1,this.foffset=-1,1):(this.version=3,3)},this.getSerialNumberHex=function(){return i(this.hex,0,[0,1+this.foffset],"02")},this.getSignatureAlgorithmField=function(){return u(i(this.hex,0,[0,2+this.foffset,0],"06"))},this.getIssuerHex=function(){return o(this.hex,0,[0,3+this.foffset],"30")},this.getIssuerString=function(){return c.hex2dn(this.getIssuerHex())},this.getSubjectHex=function(){return o(this.hex,0,[0,5+this.foffset],"30")},this.getSubjectString=function(){return c.hex2dn(this.getSubjectHex())},this.getNotBefore=function(){var e=i(this.hex,0,[0,4+this.foffset,0]);return e=e.replace(/(..)/g,"%$1"),e=decodeURIComponent(e)},this.getNotAfter=function(){var e=i(this.hex,0,[0,4+this.foffset,1]);return e=e.replace(/(..)/g,"%$1"),e=decodeURIComponent(e)},this.getPublicKeyHex=function(){return e.getTLVbyList(this.hex,0,[0,6+this.foffset],"30")},this.getPublicKeyIdx=function(){return s(this.hex,0,[0,6+this.foffset],"30")},this.getPublicKeyContentIdx=function(){var e=this.getPublicKeyIdx();return s(this.hex,e,[1,0],"30")},this.getPublicKey=function(){return z.getKey(this.getPublicKeyHex(),null,"pkcs8pub")},this.getSignatureAlgorithmName=function(){return u(i(this.hex,0,[1,0],"06"))},this.getSignatureValueHex=function(){return i(this.hex,0,[2],"03",!0)},this.verifySignature=function(e){var t=this.getSignatureAlgorithmName(),r=this.getSignatureValueHex(),n=o(this.hex,0,[0],"30"),i=new K.crypto.Signature({alg:t});return i.init(e),i.updateHex(n),i.verify(r)},this.parseExt=function(){if(3!==this.version)return-1;var r=s(this.hex,0,[0,7,0],"30"),n=t(this.hex,r);this.aExtInfo=new Array;for(var o=0;o<n.length;o++){var u={critical:!1},c=0;3===t(this.hex,n[o]).length&&(u.critical=!0,c=1),u.oid=e.hextooidstr(i(this.hex,n[o],[0],"06"));var h=s(this.hex,n[o],[1+c]);u.vidx=a(this.hex,h),this.aExtInfo.push(u)}},this.getExtInfo=function(e){var t=this.aExtInfo,r=e;if(e.match(/^[0-9.]+$/)||(r=K.asn1.x509.OID.name2oid(e)),""!==r)for(var n=0;n<t.length;n++)if(t[n].oid===r)return t[n]},this.getExtBasicConstraints=function(){var e=this.getExtInfo("basicConstraints");if(void 0===e)return e;var t=r(this.hex,e.vidx);if(""===t)return{};if("0101ff"===t)return{cA:!0};if("0101ff02"===t.substr(0,8)){var n=r(t,6);return{cA:!0,pathLen:parseInt(n,16)}}throw"basicConstraints parse error"},this.getExtKeyUsageBin=function(){var e=this.getExtInfo("keyUsage");if(void 0===e)return"";var t=r(this.hex,e.vidx);if(t.length%2!=0||t.length<=2)throw"malformed key usage value";var n=parseInt(t.substr(0,2)),i=parseInt(t.substr(2),16).toString(2);return i.substr(0,i.length-n)},this.getExtKeyUsageString=function(){for(var e=this.getExtKeyUsageBin(),t=new Array,r=0;r<e.length;r++)"1"==e.substr(r,1)&&t.push(X509.KEYUSAGE_NAME[r]);return t.join(",")},this.getExtSubjectKeyIdentifier=function(){var e=this.getExtInfo("subjectKeyIdentifier");return void 0===e?e:r(this.hex,e.vidx)},this.getExtAuthorityKeyIdentifier=function(){var e=this.getExtInfo("authorityKeyIdentifier");if(void 0===e)return e;for(var i={},o=n(this.hex,e.vidx),s=t(o,0),a=0;a<s.length;a++)"80"===o.substr(s[a],2)&&(i.kid=r(o,s[a]));return i},this.getExtExtKeyUsageName=function(){var e=this.getExtInfo("extKeyUsage");if(void 0===e)return e;var i=new Array,o=n(this.hex,e.vidx);if(""===o)return i;for(var s=t(o,0),a=0;a<s.length;a++)i.push(u(r(o,s[a])));return i},this.getExtSubjectAltName=function(){for(var e=this.getExtSubjectAltName2(),t=new Array,r=0;r<e.length;r++)"DNS"===e[r][0]&&t.push(e[r][1]);return t},this.getExtSubjectAltName2=function(){var e,i,o,s=this.getExtInfo("subjectAltName");if(void 0===s)return s;for(var a=new Array,u=n(this.hex,s.vidx),c=t(u,0),h=0;h<c.length;h++)o=u.substr(c[h],2),e=r(u,c[h]),"81"===o&&(i=hextoutf8(e),a.push(["MAIL",i])),"82"===o&&(i=hextoutf8(e),a.push(["DNS",i])),"84"===o&&(i=X509.hex2dn(e,0),a.push(["DN",i])),"86"===o&&(i=hextoutf8(e),a.push(["URI",i])),"87"===o&&(i=hextoip(e),a.push(["IP",i]));return a},this.getExtCRLDistributionPointsURI=function(){var e=this.getExtInfo("cRLDistributionPoints");if(void 0===e)return e;for(var r=new Array,n=t(this.hex,e.vidx),o=0;o<n.length;o++)try{var s=hextoutf8(i(this.hex,n[o],[0,0,0],"86"));r.push(s)}catch(e){}return r},this.getExtAIAInfo=function(){var e=this.getExtInfo("authorityInfoAccess");if(void 0===e)return e;for(var r={ocsp:[],caissuer:[]},n=t(this.hex,e.vidx),o=0;o<n.length;o++){var s=i(this.hex,n[o],[0],"06"),a=i(this.hex,n[o],[1],"86");"2b06010505073001"===s&&r.ocsp.push(hextoutf8(a)),"2b06010505073002"===s&&r.caissuer.push(hextoutf8(a))}return r},this.getExtCertificatePolicies=function(){var e=this.getExtInfo("certificatePolicies");if(void 0===e)return e;for(var o=n(this.hex,e.vidx),s=[],a=t(o,0),c=0;c<a.length;c++){var h={},f=t(o,a[c]);if(h.id=u(r(o,f[0])),2===f.length)for(var l=t(o,f[1]),g=0;g<l.length;g++){var p=i(o,l[g],[0],"06");"2b06010505070201"===p?h.cps=hextoutf8(i(o,l[g],[1])):"2b06010505070202"===p&&(h.unotice=hextoutf8(i(o,l[g],[1,0])))}s.push(h)}return s},this.readCertPEM=function(e){this.readCertHex(h(e))},this.readCertHex=function(e){this.hex=e,this.getVersion();try{s(this.hex,0,[0,7],"a3"),this.parseExt()}catch(e){}},this.getInfo=function(){var e,t,r;if(e="Basic Fields\n",e+="  serial number: "+this.getSerialNumberHex()+"\n",e+="  signature algorithm: "+this.getSignatureAlgorithmField()+"\n",e+="  issuer: "+this.getIssuerString()+"\n",e+="  notBefore: "+this.getNotBefore()+"\n",e+="  notAfter: "+this.getNotAfter()+"\n",e+="  subject: "+this.getSubjectString()+"\n",e+="  subject public key info: \n",e+="    key algorithm: "+(t=this.getPublicKey()).type+"\n","RSA"===t.type&&(e+="    n="+hextoposhex(t.n.toString(16)).substr(0,16)+"...\n",e+="    e="+hextoposhex(t.e.toString(16))+"\n"),void 0!==(r=this.aExtInfo)&&null!==r){e+="X509v3 Extensions:\n";for(var n=0;n<r.length;n++){var i=r[n],o=K.asn1.x509.OID.oid2name(i.oid);""===o&&(o=i.oid);var s="";if(!0===i.critical&&(s="CRITICAL"),e+="  "+o+" "+s+":\n","basicConstraints"===o){var a=this.getExtBasicConstraints();void 0===a.cA?e+="    {}\n":(e+="    cA=true",void 0!==a.pathLen&&(e+=", pathLen="+a.pathLen),e+="\n")}else if("keyUsage"===o)e+="    "+this.getExtKeyUsageString()+"\n";else if("subjectKeyIdentifier"===o)e+="    "+this.getExtSubjectKeyIdentifier()+"\n";else if("authorityKeyIdentifier"===o){var u=this.getExtAuthorityKeyIdentifier();void 0!==u.kid&&(e+="    kid="+u.kid+"\n")}else{if("extKeyUsage"===o)e+="    "+this.getExtExtKeyUsageName().join(", ")+"\n";else if("subjectAltName"===o)e+="    "+this.getExtSubjectAltName2()+"\n";else if("cRLDistributionPoints"===o)e+="    "+this.getExtCRLDistributionPointsURI()+"\n";else if("authorityInfoAccess"===o){var c=this.getExtAIAInfo();void 0!==c.ocsp&&(e+="    ocsp: "+c.ocsp.join(",")+"\n"),void 0!==c.caissuer&&(e+="    caissuer: "+c.caissuer.join(",")+"\n")}else if("certificatePolicies"===o)for(var h=this.getExtCertificatePolicies(),f=0;f<h.length;f++)void 0!==h[f].id&&(e+="    policy oid: "+h[f].id+"\n"),void 0!==h[f].cps&&(e+="    cps: "+h[f].cps+"\n")}}}return e+="signature algorithm: "+this.getSignatureAlgorithmName()+"\n",e+="signature: "+this.getSignatureValueHex().substr(0,16)+"...\n"}}Y.compile("[^0-9a-f]","gi"),RSAKey.prototype.sign=function(e,t){var r=function b(e){return K.crypto.Util.hashString(e,t)}(e);return this.signWithMessageHash(r,t)},RSAKey.prototype.signWithMessageHash=function(e,t){var r=parseBigInt(K.crypto.Util.getPaddedDigestInfoHex(e,t,this.n.bitLength()),16);return _zeroPaddingOfSignature(this.doPrivate(r).toString(16),this.n.bitLength())},RSAKey.prototype.signPSS=function(e,t,r){var n=function c(e){return K.crypto.Util.hashHex(e,t)}(rstrtohex(e));return void 0===r&&(r=-1),this.signWithMessageHashPSS(n,t,r)},RSAKey.prototype.signWithMessageHashPSS=function(e,t,r){var n,i=hextorstr(e),s=i.length,a=this.n.bitLength()-1,u=Math.ceil(a/8),c=function o(e){return K.crypto.Util.hashHex(e,t)};if(-1===r||void 0===r)r=s;else if(-2===r)r=u-s-2;else if(r<-2)throw"invalid salt length";if(u<s+r+2)throw"data too long";var h="";r>0&&(h=new Array(r),(new SecureRandom).nextBytes(h),h=String.fromCharCode.apply(String,h));var f=hextorstr(c(rstrtohex("\0\0\0\0\0\0\0\0"+i+h))),l=[];for(n=0;n<u-r-s-2;n+=1)l[n]=0;var g=String.fromCharCode.apply(String,l)+""+h,p=pss_mgf1_str(f,g.length,c),d=[];for(n=0;n<g.length;n+=1)d[n]=g.charCodeAt(n)^p.charCodeAt(n);var v=65280>>8*u-a&255;for(d[0]&=~v,n=0;n<s;n++)d.push(f.charCodeAt(n));return d.push(188),_zeroPaddingOfSignature(this.doPrivate(new BigInteger(d)).toString(16),this.n.bitLength())},RSAKey.prototype.verify=function(e,t){var r=parseBigInt(t=(t=t.replace(Y,"")).replace(/[ \n]+/g,""),16);if(r.bitLength()>this.n.bitLength())return 0;var n=_rsasign_getAlgNameAndHashFromHexDisgestInfo(this.doPublic(r).toString(16).replace(/^1f+00/,""));if(0==n.length)return!1;var i=n[0];return n[1]==function a(e){return K.crypto.Util.hashString(e,i)}(e)},RSAKey.prototype.verifyWithMessageHash=function(e,t){var r=parseBigInt(t=(t=t.replace(Y,"")).replace(/[ \n]+/g,""),16);if(r.bitLength()>this.n.bitLength())return 0;var n=_rsasign_getAlgNameAndHashFromHexDisgestInfo(this.doPublic(r).toString(16).replace(/^1f+00/,""));if(0==n.length)return!1;n[0];return n[1]==e},RSAKey.prototype.verifyPSS=function(t,r,n,i){var o=function e(t){return K.crypto.Util.hashHex(t,n)}(rstrtohex(t));return void 0===i&&(i=-1),this.verifyWithMessageHashPSS(o,r,n,i)},RSAKey.prototype.verifyWithMessageHashPSS=function(e,t,n,i){var o=new BigInteger(t,16);if(o.bitLength()>this.n.bitLength())return!1;var s,a=function r(e){return K.crypto.Util.hashHex(e,n)},u=hextorstr(e),c=u.length,h=this.n.bitLength()-1,f=Math.ceil(h/8);if(-1===i||void 0===i)i=c;else if(-2===i)i=f-c-2;else if(i<-2)throw"invalid salt length";if(f<c+i+2)throw"data too long";var l=this.doPublic(o).toByteArray();for(s=0;s<l.length;s+=1)l[s]&=255;for(;l.length<f;)l.unshift(0);if(188!==l[f-1])throw"encoded message does not end in 0xbc";var g=(l=String.fromCharCode.apply(String,l)).substr(0,f-c-1),p=l.substr(g.length,c),d=65280>>8*f-h&255;if(0!=(g.charCodeAt(0)&d))throw"bits beyond keysize not zero";var v=pss_mgf1_str(p,g.length,a),y=[];for(s=0;s<g.length;s+=1)y[s]=g.charCodeAt(s)^v.charCodeAt(s);y[0]&=~d;var m=f-c-i-2;for(s=0;s<m;s+=1)if(0!==y[s])throw"leftmost octets not zero";if(1!==y[m])throw"0x01 marker not found";return p===hextorstr(a(rstrtohex("\0\0\0\0\0\0\0\0"+u+String.fromCharCode.apply(String,y.slice(-i)))))},RSAKey.SALT_LEN_HLEN=-1,RSAKey.SALT_LEN_MAX=-2,RSAKey.SALT_LEN_RECOVER=-2,X509.hex2dn=function(e,t){if(void 0===t&&(t=0),"30"!==e.substr(t,2))throw"malformed DN";for(var r=new Array,n=J.getChildIdx(e,t),i=0;i<n.length;i++)r.push(X509.hex2rdn(e,n[i]));return"/"+(r=r.map(function(e){return e.replace("/","\\/")})).join("/")},X509.hex2rdn=function(e,t){if(void 0===t&&(t=0),"31"!==e.substr(t,2))throw"malformed RDN";for(var r=new Array,n=J.getChildIdx(e,t),i=0;i<n.length;i++)r.push(X509.hex2attrTypeValue(e,n[i]));return(r=r.map(function(e){return e.replace("+","\\+")})).join("+")},X509.hex2attrTypeValue=function(e,t){var r=J,n=r.getV;if(void 0===t&&(t=0),"30"!==e.substr(t,2))throw"malformed attribute type and value";var i=r.getChildIdx(e,t);2!==i.length||e.substr(i[0],2);var o=n(e,i[0]),s=K.asn1.ASN1Util.oidHexToInt(o);return K.asn1.x509.OID.oid2atype(s)+"="+hextorstr(n(e,i[1]))},X509.getPublicKeyFromCertHex=function(e){var t=new X509;return t.readCertHex(e),t.getPublicKey()},X509.getPublicKeyFromCertPEM=function(e){var t=new X509;return t.readCertPEM(e),t.getPublicKey()},X509.getPublicKeyInfoPropOfCertPEM=function(e){var t,r,n=J.getVbyList,i={};return i.algparam=null,(t=new X509).readCertPEM(e),r=t.getPublicKeyHex(),i.keyhex=n(r,0,[1],"03").substr(2),i.algoid=n(r,0,[0,0],"06"),"2a8648ce3d0201"===i.algoid&&(i.algparam=n(r,0,[0,1],"06")),i},X509.KEYUSAGE_NAME=["digitalSignature","nonRepudiation","keyEncipherment","dataEncipherment","keyAgreement","keyCertSign","cRLSign","encipherOnly","decipherOnly"],void 0!==K&&K||(K={}),void 0!==K.jws&&K.jws||(K.jws={}),K.jws.JWS=function(){var e=K.jws.JWS.isSafeJSONString;this.parseJWS=function(t,r){if(void 0===this.parsedJWS||!r&&void 0===this.parsedJWS.sigvalH){var n=t.match(/^([^.]+)\.([^.]+)\.([^.]+)$/);if(null==n)throw"JWS signature is not a form of 'Head.Payload.SigValue'.";var i=n[1],o=n[2],s=n[3],a=i+"."+o;if(this.parsedJWS={},this.parsedJWS.headB64U=i,this.parsedJWS.payloadB64U=o,this.parsedJWS.sigvalB64U=s,this.parsedJWS.si=a,!r){var u=b64utohex(s),c=parseBigInt(u,16);this.parsedJWS.sigvalH=u,this.parsedJWS.sigvalBI=c}var h=W(i),f=W(o);if(this.parsedJWS.headS=h,this.parsedJWS.payloadS=f,!e(h,this.parsedJWS,"headP"))throw"malformed JSON string for JWS Head: "+h}}},K.jws.JWS.sign=function(e,t,r,n,o){var s,a,u,c=K,h=c.jws.JWS,f=h.readSafeJSONString,l=h.isSafeJSONString,g=c.crypto,p=(g.ECDSA,g.Mac),d=g.Signature,v=JSON;if("string"!=typeof t&&"object"!=(void 0===t?"undefined":i(t)))throw"spHeader must be JSON string or object: "+t;if("object"==(void 0===t?"undefined":i(t))&&(a=t,s=v.stringify(a)),"string"==typeof t){if(!l(s=t))throw"JWS Head is not safe JSON string: "+s;a=f(s)}if(u=r,"object"==(void 0===r?"undefined":i(r))&&(u=v.stringify(r)),""!=e&&null!=e||void 0===a.alg||(e=a.alg),""!=e&&null!=e&&void 0===a.alg&&(a.alg=e,s=v.stringify(a)),e!==a.alg)throw"alg and sHeader.alg doesn't match: "+e+"!="+a.alg;var y=null;if(void 0===h.jwsalg2sigalg[e])throw"unsupported alg name: "+e;y=h.jwsalg2sigalg[e];var m=q(s)+"."+q(u),S="";if("Hmac"==y.substr(0,4)){if(void 0===n)throw"mac key shall be specified for HS* alg";var F=new p({alg:y,prov:"cryptojs",pass:n});F.updateString(m),S=F.doFinal()}else{var b;if(-1!=y.indexOf("withECDSA"))(b=new d({alg:y})).init(n,o),b.updateString(m),hASN1Sig=b.sign(),S=K.crypto.ECDSA.asn1SigToConcatSig(hASN1Sig);else if("none"!=y)(b=new d({alg:y})).init(n,o),b.updateString(m),S=b.sign()}return m+"."+hextob64u(S)},K.jws.JWS.verify=function(e,t,r){var n,o=K,s=o.jws.JWS,a=s.readSafeJSONString,u=o.crypto,c=u.ECDSA,h=u.Mac,f=u.Signature;void 0!==i(RSAKey)&&(n=RSAKey);var l=e.split(".");if(3!==l.length)return!1;var g=l[0]+"."+l[1],p=b64utohex(l[2]),d=a(W(l[0])),v=null,y=null;if(void 0===d.alg)throw"algorithm not specified in header";if((y=(v=d.alg).substr(0,2),null!=r&&"[object Array]"===Object.prototype.toString.call(r)&&r.length>0)&&-1==(":"+r.join(":")+":").indexOf(":"+v+":"))throw"algorithm '"+v+"' not accepted in the list";if("none"!=v&&null===t)throw"key shall be specified to verify.";if("string"==typeof t&&-1!=t.indexOf("-----BEGIN ")&&(t=z.getKey(t)),!("RS"!=y&&"PS"!=y||t instanceof n))throw"key shall be a RSAKey obj for RS* and PS* algs";if("ES"==y&&!(t instanceof c))throw"key shall be a ECDSA obj for ES* algs";var m=null;if(void 0===s.jwsalg2sigalg[d.alg])throw"unsupported alg name: "+v;if("none"==(m=s.jwsalg2sigalg[v]))throw"not supported";if("Hmac"==m.substr(0,4)){if(void 0===t)throw"hexadecimal key shall be specified for HMAC";var S=new h({alg:m,pass:t});return S.updateString(g),p==S.doFinal()}if(-1!=m.indexOf("withECDSA")){var F,b=null;try{b=c.concatSigToASN1Sig(p)}catch(e){return!1}return(F=new f({alg:m})).init(t),F.updateString(g),F.verify(b)}return(F=new f({alg:m})).init(t),F.updateString(g),F.verify(p)},K.jws.JWS.parse=function(e){var t,r,n,i=e.split("."),o={};if(2!=i.length&&3!=i.length)throw"malformed sJWS: wrong number of '.' splitted elements";return t=i[0],r=i[1],3==i.length&&(n=i[2]),o.headerObj=K.jws.JWS.readSafeJSONString(W(t)),o.payloadObj=K.jws.JWS.readSafeJSONString(W(r)),o.headerPP=JSON.stringify(o.headerObj,null,"  "),null==o.payloadObj?o.payloadPP=W(r):o.payloadPP=JSON.stringify(o.payloadObj,null,"  "),void 0!==n&&(o.sigHex=b64utohex(n)),o},K.jws.JWS.verifyJWT=function(e,t,r){var n=K.jws,o=n.JWS,s=o.readSafeJSONString,a=o.inArray,u=o.includedArray,c=e.split("."),h=c[0],f=c[1],l=(b64utohex(c[2]),s(W(h))),g=s(W(f));if(void 0===l.alg)return!1;if(void 0===r.alg)throw"acceptField.alg shall be specified";if(!a(l.alg,r.alg))return!1;if(void 0!==g.iss&&"object"===i(r.iss)&&!a(g.iss,r.iss))return!1;if(void 0!==g.sub&&"object"===i(r.sub)&&!a(g.sub,r.sub))return!1;if(void 0!==g.aud&&"object"===i(r.aud))if("string"==typeof g.aud){if(!a(g.aud,r.aud))return!1}else if("object"==i(g.aud)&&!u(g.aud,r.aud))return!1;var p=n.IntDate.getNow();return void 0!==r.verifyAt&&"number"==typeof r.verifyAt&&(p=r.verifyAt),void 0!==r.gracePeriod&&"number"==typeof r.gracePeriod||(r.gracePeriod=0),!(void 0!==g.exp&&"number"==typeof g.exp&&g.exp+r.gracePeriod<p)&&(!(void 0!==g.nbf&&"number"==typeof g.nbf&&p<g.nbf-r.gracePeriod)&&(!(void 0!==g.iat&&"number"==typeof g.iat&&p<g.iat-r.gracePeriod)&&((void 0===g.jti||void 0===r.jti||g.jti===r.jti)&&!!o.verify(e,t,r.alg))))},K.jws.JWS.includedArray=function(e,t){var r=K.jws.JWS.inArray;if(null===e)return!1;if("object"!==(void 0===e?"undefined":i(e)))return!1;if("number"!=typeof e.length)return!1;for(var n=0;n<e.length;n++)if(!r(e[n],t))return!1;return!0},K.jws.JWS.inArray=function(e,t){if(null===t)return!1;if("object"!==(void 0===t?"undefined":i(t)))return!1;if("number"!=typeof t.length)return!1;for(var r=0;r<t.length;r++)if(t[r]==e)return!0;return!1},K.jws.JWS.jwsalg2sigalg={HS256:"HmacSHA256",HS384:"HmacSHA384",HS512:"HmacSHA512",RS256:"SHA256withRSA",RS384:"SHA384withRSA",RS512:"SHA512withRSA",ES256:"SHA256withECDSA",ES384:"SHA384withECDSA",PS256:"SHA256withRSAandMGF1",PS384:"SHA384withRSAandMGF1",PS512:"SHA512withRSAandMGF1",none:"none"},K.jws.JWS.isSafeJSONString=function(e,t,r){var n=null;try{return"object"!=(void 0===(n=V(e))?"undefined":i(n))?0:n.constructor===Array?0:(t&&(t[r]=n),1)}catch(e){return 0}},K.jws.JWS.readSafeJSONString=function(e){var t=null;try{return"object"!=(void 0===(t=V(e))?"undefined":i(t))?null:t.constructor===Array?null:t}catch(e){return null}},K.jws.JWS.getEncodedSignatureValueFromJWS=function(e){var t=e.match(/^[^.]+\.[^.]+\.([^.]+)$/);if(null==t)throw"JWS signature is not a form of 'Head.Payload.SigValue'.";return t[1]},K.jws.JWS.getJWKthumbprint=function(e){if("RSA"!==e.kty&&"EC"!==e.kty&&"oct"!==e.kty)throw"unsupported algorithm for JWK Thumprint";var t="{";if("RSA"===e.kty){if("string"!=typeof e.n||"string"!=typeof e.e)throw"wrong n and e value for RSA key";t+='"e":"'+e.e+'",',t+='"kty":"'+e.kty+'",',t+='"n":"'+e.n+'"}'}else if("EC"===e.kty){if("string"!=typeof e.crv||"string"!=typeof e.x||"string"!=typeof e.y)throw"wrong crv, x and y value for EC key";t+='"crv":"'+e.crv+'",',t+='"kty":"'+e.kty+'",',t+='"x":"'+e.x+'",',t+='"y":"'+e.y+'"}'}else if("oct"===e.kty){if("string"!=typeof e.k)throw"wrong k value for oct(symmetric) key";t+='"kty":"'+e.kty+'",',t+='"k":"'+e.k+'"}'}var r=rstrtohex(t);return hextob64u(K.crypto.Util.hashHex(r,"sha256"))},K.jws.IntDate={},K.jws.IntDate.get=function(e){var t=K.jws.IntDate,r=t.getNow,n=t.getZulu;if("now"==e)return r();if("now + 1hour"==e)return r()+3600;if("now + 1day"==e)return r()+86400;if("now + 1month"==e)return r()+2592e3;if("now + 1year"==e)return r()+31536e3;if(e.match(/Z$/))return n(e);if(e.match(/^[0-9]+$/))return parseInt(e);throw"unsupported format: "+e},K.jws.IntDate.getZulu=function(e){return zulutosec(e)},K.jws.IntDate.getNow=function(){return~~(new Date/1e3)},K.jws.IntDate.intDate2UTCString=function(e){return new Date(1e3*e).toUTCString()},K.jws.IntDate.intDate2Zulu=function(e){var t=new Date(1e3*e);return("0000"+t.getUTCFullYear()).slice(-4)+("00"+(t.getUTCMonth()+1)).slice(-2)+("00"+t.getUTCDate()).slice(-2)+("00"+t.getUTCHours()).slice(-2)+("00"+t.getUTCMinutes()).slice(-2)+("00"+t.getUTCSeconds()).slice(-2)+"Z"},t.SecureRandom=SecureRandom,t.rng_seed_time=rng_seed_time,t.BigInteger=BigInteger,t.RSAKey=RSAKey,t.ECDSA=K.crypto.ECDSA,t.DSA=K.crypto.DSA,t.Signature=K.crypto.Signature,t.MessageDigest=K.crypto.MessageDigest,t.Mac=K.crypto.Mac,t.Cipher=K.crypto.Cipher,t.KEYUTIL=z,t.ASN1HEX=J,t.X509=X509,t.CryptoJS=y,t.b64tohex=b64tohex,t.b64toBA=b64toBA,t.stoBA=stoBA,t.BAtos=BAtos,t.BAtohex=BAtohex,t.stohex=stohex,t.stob64=function stob64(e){return hex2b64(stohex(e))},t.stob64u=function stob64u(e){return b64tob64u(hex2b64(stohex(e)))},t.b64utos=function b64utos(e){return BAtos(b64toBA(b64utob64(e)))},t.b64tob64u=b64tob64u,t.b64utob64=b64utob64,t.hex2b64=hex2b64,t.hextob64u=hextob64u,t.b64utohex=b64utohex,t.utf8tob64u=q,t.b64utoutf8=W,t.utf8tob64=function utf8tob64(e){return hex2b64(uricmptohex(encodeURIComponentAll(e)))},t.b64toutf8=function b64toutf8(e){return decodeURIComponent(hextouricmp(b64tohex(e)))},t.utf8tohex=utf8tohex,t.hextoutf8=hextoutf8,t.hextorstr=hextorstr,t.rstrtohex=rstrtohex,t.hextob64=hextob64,t.hextob64nl=hextob64nl,t.b64nltohex=b64nltohex,t.hextopem=hextopem,t.pemtohex=pemtohex,t.hextoArrayBuffer=function hextoArrayBuffer(e){if(e.length%2!=0)throw"input is not even length";if(null==e.match(/^[0-9A-Fa-f]+$/))throw"input is not hexadecimal";for(var t=new ArrayBuffer(e.length/2),r=new DataView(t),n=0;n<e.length/2;n++)r.setUint8(n,parseInt(e.substr(2*n,2),16));return t},t.ArrayBuffertohex=function ArrayBuffertohex(e){for(var t="",r=new DataView(e),n=0;n<e.byteLength;n++)t+=("00"+r.getUint8(n).toString(16)).slice(-2);return t},t.zulutomsec=zulutomsec,t.zulutosec=zulutosec,t.zulutodate=function zulutodate(e){return new Date(zulutomsec(e))},t.datetozulu=function datetozulu(e,t,r){var n,i=e.getUTCFullYear();if(t){if(i<1950||2049<i)throw"not proper year for UTCTime: "+i;n=(""+i).slice(-2)}else n=("000"+i).slice(-4);if(n+=("0"+(e.getUTCMonth()+1)).slice(-2),n+=("0"+e.getUTCDate()).slice(-2),n+=("0"+e.getUTCHours()).slice(-2),n+=("0"+e.getUTCMinutes()).slice(-2),n+=("0"+e.getUTCSeconds()).slice(-2),r){var o=e.getUTCMilliseconds();0!==o&&(n+="."+(o=(o=("00"+o).slice(-3)).replace(/0+$/g,"")))}return n+="Z"},t.uricmptohex=uricmptohex,t.hextouricmp=hextouricmp,t.ipv6tohex=ipv6tohex,t.hextoipv6=hextoipv6,t.hextoip=hextoip,t.iptohex=function iptohex(e){var t="malformed IP address";if(!(e=e.toLowerCase(e)).match(/^[0-9.]+$/)){if(e.match(/^[0-9a-f:]+$/)&&-1!==e.indexOf(":"))return ipv6tohex(e);throw t}var r=e.split(".");if(4!==r.length)throw t;var n="";try{for(var i=0;i<4;i++)n+=("0"+parseInt(r[i]).toString(16)).slice(-2);return n}catch(e){throw t}},t.encodeURIComponentAll=encodeURIComponentAll,t.newline_toUnix=function newline_toUnix(e){return e=e.replace(/\r\n/gm,"\n")},t.newline_toDos=function newline_toDos(e){return e=(e=e.replace(/\r\n/gm,"\n")).replace(/\n/gm,"\r\n")},t.hextoposhex=hextoposhex,t.intarystrtohex=function intarystrtohex(e){e=(e=(e=e.replace(/^\s*\[\s*/,"")).replace(/\s*\]\s*$/,"")).replace(/\s*/g,"");try{return e.split(/,/).map(function(e,t,r){var n=parseInt(e);if(n<0||255<n)throw"integer not in range 0-255";return("00"+n.toString(16)).slice(-2)}).join("")}catch(e){throw"malformed integer array string: "+e}},t.strdiffidx=function strdiffidx(e,t){var r=e.length;e.length>t.length&&(r=t.length);for(var n=0;n<r;n++)if(e.charCodeAt(n)!=t.charCodeAt(n))return n;return e.length!=t.length?r:-1},t.KJUR=K,t.crypto=K.crypto,t.asn1=K.asn1,t.jws=K.jws,t.lang=K.lang}).call(this,r(40).Buffer)},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.JoseUtil=void 0;var n=r(41),i=r(0);var o=["RS256","RS384","RS512","PS256","PS384","PS512","ES256","ES384","ES512"];t.JoseUtil=function(){function JoseUtil(){!function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,JoseUtil)}return JoseUtil.parseJwt=function parseJwt(e){i.Log.debug("JoseUtil.parseJwt");try{var t=n.jws.JWS.parse(e);return{header:t.headerObj,payload:t.payloadObj}}catch(e){i.Log.error(e)}},JoseUtil.validateJwt=function validateJwt(e,t,r,o,s,a){i.Log.debug("JoseUtil.validateJwt");try{if("RSA"===t.kty)if(t.e&&t.n)t=n.KEYUTIL.getKey(t);else{if(!t.x5c||!t.x5c.length)return i.Log.error("JoseUtil.validateJwt: RSA key missing key material",t),Promise.reject(new Error("RSA key missing key material"));var u=(0,n.b64tohex)(t.x5c[0]);t=n.X509.getPublicKeyFromCertHex(u)}else{if("EC"!==t.kty)return i.Log.error("JoseUtil.validateJwt: Unsupported key type",t&&t.kty),Promise.reject(new Error("Unsupported key type: "+t&&t.kty));if(!(t.crv&&t.x&&t.y))return i.Log.error("JoseUtil.validateJwt: EC key missing key material",t),Promise.reject(new Error("EC key missing key material"));t=n.KEYUTIL.getKey(t)}return JoseUtil._validateJwt(e,t,r,o,s,a)}catch(e){return i.Log.error(e&&e.message||e),Promise.reject("JWT validation failed")}},JoseUtil._validateJwt=function _validateJwt(e,t,r,s,a,u){a||(a=0),u||(u=parseInt(Date.now()/1e3));var c=JoseUtil.parseJwt(e).payload;if(!c.iss)return i.Log.error("JoseUtil._validateJwt: issuer was not provided"),Promise.reject(new Error("issuer was not provided"));if(c.iss!==r)return i.Log.error("JoseUtil._validateJwt: Invalid issuer in token",c.iss),Promise.reject(new Error("Invalid issuer in token: "+c.iss));if(!c.aud)return i.Log.error("JoseUtil._validateJwt: aud was not provided"),Promise.reject(new Error("aud was not provided"));if(!(c.aud===s||Array.isArray(c.aud)&&c.aud.indexOf(s)>=0))return i.Log.error("JoseUtil._validateJwt: Invalid audience in token",c.aud),Promise.reject(new Error("Invalid audience in token: "+c.aud));var h=u+a,f=u-a;if(!c.iat)return i.Log.error("JoseUtil._validateJwt: iat was not provided"),Promise.reject(new Error("iat was not provided"));if(h<c.iat)return i.Log.error("JoseUtil._validateJwt: iat is in the future",c.iat),Promise.reject(new Error("iat is in the future: "+c.iat));if(c.nbf&&h<c.nbf)return i.Log.error("JoseUtil._validateJwt: nbf is in the future",c.nbf),Promise.reject(new Error("nbf is in the future: "+c.nbf));if(!c.exp)return i.Log.error("JoseUtil._validateJwt: exp was not provided"),Promise.reject(new Error("exp was not provided"));if(c.exp<f)return i.Log.error("JoseUtil._validateJwt: exp is in the past",c.exp),Promise.reject(new Error("exp is in the past:"+c.exp));try{if(!n.jws.JWS.verify(e,t,o))return i.Log.error("JoseUtil._validateJwt: signature validation failed"),Promise.reject(new Error("signature validation failed"))}catch(e){return i.Log.error(e&&e.message||e),Promise.reject(new Error("signature validation failed"))}return Promise.resolve()},JoseUtil.hashString=function hashString(e,t){try{return n.crypto.Util.hashString(e,t)}catch(e){i.Log.error(e)}},JoseUtil.hexToBase64Url=function hexToBase64Url(e){try{return(0,n.hextob64u)(e)}catch(e){i.Log.error(e)}},JoseUtil}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.UserInfoService=void 0;var n=r(17),i=r(3),o=r(0);t.UserInfoService=function(){function UserInfoService(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:n.JsonService,r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:i.MetadataService;if(function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,UserInfoService),!e)throw o.Log.error("UserInfoService.ctor: No settings passed"),new Error("settings");this._settings=e,this._jsonService=new t,this._metadataService=new r(this._settings)}return UserInfoService.prototype.getClaims=function getClaims(e){var t=this;return e?this._metadataService.getUserInfoEndpoint().then(function(r){return o.Log.debug("UserInfoService.getClaims: received userinfo url",r),t._jsonService.getJson(r,e).then(function(e){return o.Log.debug("UserInfoService.getClaims: claims received",e),e})}):(o.Log.error("UserInfoService.getClaims: No token passed"),Promise.reject(new Error("A token is required")))},UserInfoService}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.ResponseValidator=void 0;var n=r(0),i=r(3),o=r(43),s=r(16),a=r(42);var u=["nonce","at_hash","iat","nbf","exp","aud","iss","c_hash"];t.ResponseValidator=function(){function ResponseValidator(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:i.MetadataService,r=arguments.length>2&&void 0!==arguments[2]?arguments[2]:o.UserInfoService,s=arguments.length>3&&void 0!==arguments[3]?arguments[3]:a.JoseUtil;if(function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,ResponseValidator),!e)throw n.Log.error("ResponseValidator.ctor: No settings passed to ResponseValidator"),new Error("settings");this._settings=e,this._metadataService=new t(this._settings),this._userInfoService=new r(this._settings),this._joseUtil=s}return ResponseValidator.prototype.validateSigninResponse=function validateSigninResponse(e,t){var r=this;return n.Log.debug("ResponseValidator.validateSigninResponse"),this._processSigninParams(e,t).then(function(t){return n.Log.debug("ResponseValidator.validateSigninResponse: state processed"),r._validateTokens(e,t).then(function(e){return n.Log.debug("ResponseValidator.validateSigninResponse: tokens validated"),r._processClaims(e).then(function(e){return n.Log.debug("ResponseValidator.validateSigninResponse: claims processed"),e})})})},ResponseValidator.prototype.validateSignoutResponse=function validateSignoutResponse(e,t){return e.id!==t.state?(n.Log.error("ResponseValidator.validateSignoutResponse: State does not match"),Promise.reject(new Error("State does not match"))):(n.Log.debug("ResponseValidator.validateSignoutResponse: state validated"),t.state=e.data,t.error?(n.Log.warn("ResponseValidator.validateSignoutResponse: Response was error",t.error),Promise.reject(new s.ErrorResponse(t))):Promise.resolve(t))},ResponseValidator.prototype._processSigninParams=function _processSigninParams(e,t){if(e.id!==t.state)return n.Log.error("ResponseValidator._processSigninParams: State does not match"),Promise.reject(new Error("State does not match"));if(!e.client_id)return n.Log.error("ResponseValidator._processSigninParams: No client_id on state"),Promise.reject(new Error("No client_id on state"));if(!e.authority)return n.Log.error("ResponseValidator._processSigninParams: No authority on state"),Promise.reject(new Error("No authority on state"));if(this._settings.authority){if(this._settings.authority&&this._settings.authority!==e.authority)return n.Log.error("ResponseValidator._processSigninParams: authority mismatch on settings vs. signin state"),Promise.reject(new Error("authority mismatch on settings vs. signin state"))}else this._settings.authority=e.authority;if(this._settings.client_id){if(this._settings.client_id&&this._settings.client_id!==e.client_id)return n.Log.error("ResponseValidator._processSigninParams: client_id mismatch on settings vs. signin state"),Promise.reject(new Error("client_id mismatch on settings vs. signin state"))}else this._settings.client_id=e.client_id;return n.Log.debug("ResponseValidator._processSigninParams: state validated"),t.state=e.data,t.error?(n.Log.warn("ResponseValidator._processSigninParams: Response was error",t.error),Promise.reject(new s.ErrorResponse(t))):e.nonce&&!t.id_token?(n.Log.error("ResponseValidator._processSigninParams: Expecting id_token in response"),Promise.reject(new Error("No id_token in response"))):!e.nonce&&t.id_token?(n.Log.error("ResponseValidator._processSigninParams: Not expecting id_token in response"),Promise.reject(new Error("Unexpected id_token in response"))):Promise.resolve(t)},ResponseValidator.prototype._processClaims=function _processClaims(e){var t=this;if(e.isOpenIdConnect){if(n.Log.debug("ResponseValidator._processClaims: response is OIDC, processing claims"),e.profile=this._filterProtocolClaims(e.profile),this._settings.loadUserInfo&&e.access_token)return n.Log.debug("ResponseValidator._processClaims: loading user info"),this._userInfoService.getClaims(e.access_token).then(function(r){return n.Log.debug("ResponseValidator._processClaims: user info claims received from user info endpoint"),r.sub!==e.profile.sub?(n.Log.error("ResponseValidator._processClaims: sub from user info endpoint does not match sub in access_token"),Promise.reject(new Error("sub from user info endpoint does not match sub in access_token"))):(e.profile=t._mergeClaims(e.profile,r),n.Log.debug("ResponseValidator._processClaims: user info claims received, updated profile:",e.profile),e)});n.Log.debug("ResponseValidator._processClaims: not loading user info")}else n.Log.debug("ResponseValidator._processClaims: response is not OIDC, not processing claims");return Promise.resolve(e)},ResponseValidator.prototype._mergeClaims=function _mergeClaims(e,t){var r=Object.assign({},e);for(var n in t){var i=t[n];Array.isArray(i)||(i=[i]);for(var o=0;o<i.length;o++){var s=i[o];r[n]?Array.isArray(r[n])?r[n].indexOf(s)<0&&r[n].push(s):r[n]!==s&&(r[n]=[r[n],s]):r[n]=s}}return r},ResponseValidator.prototype._filterProtocolClaims=function _filterProtocolClaims(e){n.Log.debug("ResponseValidator._filterProtocolClaims, incoming claims:",e);var t=Object.assign({},e);return this._settings._filterProtocolClaims?(u.forEach(function(e){delete t[e]}),n.Log.debug("ResponseValidator._filterProtocolClaims: protocol claims filtered",t)):n.Log.debug("ResponseValidator._filterProtocolClaims: protocol claims not filtered"),t},ResponseValidator.prototype._validateTokens=function _validateTokens(e,t){return t.id_token?t.access_token?(n.Log.debug("ResponseValidator._validateTokens: Validating id_token and access_token"),this._validateIdTokenAndAccessToken(e,t)):(n.Log.debug("ResponseValidator._validateTokens: Validating id_token"),this._validateIdToken(e,t)):(n.Log.debug("ResponseValidator._validateTokens: No id_token to validate"),Promise.resolve(t))},ResponseValidator.prototype._validateIdTokenAndAccessToken=function _validateIdTokenAndAccessToken(e,t){var r=this;return this._validateIdToken(e,t).then(function(e){return r._validateAccessToken(e)})},ResponseValidator.prototype._validateIdToken=function _validateIdToken(e,t){var r=this;if(!e.nonce)return n.Log.error("ResponseValidator._validateIdToken: No nonce on state"),Promise.reject(new Error("No nonce on state"));var i=this._joseUtil.parseJwt(t.id_token);if(!i||!i.header||!i.payload)return n.Log.error("ResponseValidator._validateIdToken: Failed to parse id_token",i),Promise.reject(new Error("Failed to parse id_token"));if(e.nonce!==i.payload.nonce)return n.Log.error("ResponseValidator._validateIdToken: Invalid nonce in id_token"),Promise.reject(new Error("Invalid nonce in id_token"));var o=i.header.kid;return this._metadataService.getIssuer().then(function(s){return n.Log.debug("ResponseValidator._validateIdToken: Received issuer"),r._metadataService.getSigningKeys().then(function(a){if(!a)return n.Log.error("ResponseValidator._validateIdToken: No signing keys from metadata"),Promise.reject(new Error("No signing keys from metadata"));n.Log.debug("ResponseValidator._validateIdToken: Received signing keys");var u=void 0;if(o)u=a.filter(function(e){return e.kid===o})[0];else{if((a=r._filterByAlg(a,i.header.alg)).length>1)return n.Log.error("ResponseValidator._validateIdToken: No kid found in id_token and more than one key found in metadata"),Promise.reject(new Error("No kid found in id_token and more than one key found in metadata"));u=a[0]}if(!u)return n.Log.error("ResponseValidator._validateIdToken: No key matching kid or alg found in signing keys"),Promise.reject(new Error("No key matching kid or alg found in signing keys"));var c=e.client_id,h=r._settings.clockSkew;return n.Log.debug("ResponseValidator._validateIdToken: Validaing JWT; using clock skew (in seconds) of: ",h),r._joseUtil.validateJwt(t.id_token,u,s,c,h).then(function(){return n.Log.debug("ResponseValidator._validateIdToken: JWT validation successful"),i.payload.sub?(t.profile=i.payload,t):(n.Log.error("ResponseValidator._validateIdToken: No sub present in id_token"),Promise.reject(new Error("No sub present in id_token")))})})})},ResponseValidator.prototype._filterByAlg=function _filterByAlg(e,t){var r=null;if(t.startsWith("RS"))r="RSA";else if(t.startsWith("PS"))r="PS";else{if(!t.startsWith("ES"))return n.Log.debug("ResponseValidator._filterByAlg: alg not supported: ",t),[];r="EC"}return n.Log.debug("ResponseValidator._filterByAlg: Looking for keys that match kty: ",r),e=e.filter(function(e){return e.kty===r}),n.Log.debug("ResponseValidator._filterByAlg: Number of keys that match kty: ",r,e.length),e},ResponseValidator.prototype._validateAccessToken=function _validateAccessToken(e){if(!e.profile)return n.Log.error("ResponseValidator._validateAccessToken: No profile loaded from id_token"),Promise.reject(new Error("No profile loaded from id_token"));if(!e.profile.at_hash)return n.Log.error("ResponseValidator._validateAccessToken: No at_hash in id_token"),Promise.reject(new Error("No at_hash in id_token"));if(!e.id_token)return n.Log.error("ResponseValidator._validateAccessToken: No id_token"),Promise.reject(new Error("No id_token"));var t=this._joseUtil.parseJwt(e.id_token);if(!t||!t.header)return n.Log.error("ResponseValidator._validateAccessToken: Failed to parse id_token",t),Promise.reject(new Error("Failed to parse id_token"));var r=t.header.alg;if(!r||5!==r.length)return n.Log.error("ResponseValidator._validateAccessToken: Unsupported alg:",r),Promise.reject(new Error("Unsupported alg: "+r));var i=r.substr(2,3);if(!i)return n.Log.error("ResponseValidator._validateAccessToken: Unsupported alg:",r,i),Promise.reject(new Error("Unsupported alg: "+r));if(256!==(i=parseInt(i))&&384!==i&&512!==i)return n.Log.error("ResponseValidator._validateAccessToken: Unsupported alg:",r,i),Promise.reject(new Error("Unsupported alg: "+r));var o="sha"+i,s=this._joseUtil.hashString(e.access_token,o);if(!s)return n.Log.error("ResponseValidator._validateAccessToken: access_token hash failed:",o),Promise.reject(new Error("Failed to validate at_hash"));var a=s.substr(0,s.length/2),u=this._joseUtil.hexToBase64Url(a);return u!==e.profile.at_hash?(n.Log.error("ResponseValidator._validateAccessToken: Failed to validate at_hash",u,e.profile.at_hash),Promise.reject(new Error("Failed to validate at_hash"))):(n.Log.debug("ResponseValidator._validateAccessToken: success"),Promise.resolve(e))},ResponseValidator}()},function(e,t,r){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var n=r(0),i=r(18),o=r(6),s=r(5),a=r(31),u=r(30),c=r(12),h=r(3),f=r(20),l=r(19),g=r(9),p=r(8),d=r(10),v=r(1),y=r(13);t.default={Log:n.Log,OidcClient:i.OidcClient,OidcClientSettings:o.OidcClientSettings,WebStorageStateStore:s.WebStorageStateStore,InMemoryWebStorage:a.InMemoryWebStorage,UserManager:u.UserManager,AccessTokenEvents:c.AccessTokenEvents,MetadataService:h.MetadataService,CordovaPopupNavigator:f.CordovaPopupNavigator,CordovaIFrameNavigator:l.CordovaIFrameNavigator,CheckSessionIFrame:g.CheckSessionIFrame,TokenRevocationClient:p.TokenRevocationClient,SessionMonitor:d.SessionMonitor,Global:v.Global,User:y.User},e.exports=t.default}])});
 
 /***/ }),
-/* 77 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16079,15 +15974,15 @@ var IdentityService = function () {
 exports.default = IdentityService;
 
 /***/ }),
-/* 78 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__App_vue_vue_type_template_id_37fe478e___ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__App_vue_vue_type_script_lang_js___ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__App_vue_vue_type_template_id_37fe478e___ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__App_vue_vue_type_script_lang_js___ = __webpack_require__(35);
 /* harmony namespace reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in __WEBPACK_IMPORTED_MODULE_1__App_vue_vue_type_script_lang_js___) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return __WEBPACK_IMPORTED_MODULE_1__App_vue_vue_type_script_lang_js___[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_componentNormalizer_js__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_runtime_componentNormalizer_js__ = __webpack_require__(20);
 
 
 
@@ -16108,7 +16003,7 @@ var component = Object(__WEBPACK_IMPORTED_MODULE_2__node_modules_vue_loader_lib_
 
 /* hot reload */
 if (true) {
-  var api = __webpack_require__(6)
+  var api = __webpack_require__(21)
   api.install(__webpack_require__(1))
   if (api.compatible) {
     module.hot.accept()
@@ -16117,7 +16012,7 @@ if (true) {
     } else {
       api.reload('37fe478e', component.options)
     }
-    module.hot.accept(24, function(__WEBPACK_OUTDATED_DEPENDENCIES__) { /* harmony import */ __WEBPACK_IMPORTED_MODULE_0__App_vue_vue_type_template_id_37fe478e___ = __webpack_require__(24); (function () {
+    module.hot.accept(23, function(__WEBPACK_OUTDATED_DEPENDENCIES__) { /* harmony import */ __WEBPACK_IMPORTED_MODULE_0__App_vue_vue_type_template_id_37fe478e___ = __webpack_require__(23); (function () {
       api.rerender('37fe478e', {
         render: __WEBPACK_IMPORTED_MODULE_0__App_vue_vue_type_template_id_37fe478e___["render"],
         staticRenderFns: __WEBPACK_IMPORTED_MODULE_0__App_vue_vue_type_template_id_37fe478e___["staticRenderFns"]
@@ -16129,7 +16024,7 @@ component.options.__file = "Client\\components\\App.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
-/* 79 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -16177,20 +16072,23 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c("li", { staticClass: "nav-item" }, [
-                    _c(
-                      "a",
-                      {
-                        attrs: { href: "#" },
-                        on: {
-                          click: function($event) {
-                            _vm.signOut()
-                          }
-                        }
-                      },
-                      [_vm._v("Logout")]
-                    )
-                  ])
+                  _vm.loggedIn
+                    ? _c("li", { staticClass: "nav-item" }, [
+                        _c(
+                          "a",
+                          {
+                            staticClass: "nav-link",
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                _vm.signOut()
+                              }
+                            }
+                          },
+                          [_vm._v("Logout")]
+                        )
+                      ])
+                    : _vm._e()
                 ])
               ]
             )

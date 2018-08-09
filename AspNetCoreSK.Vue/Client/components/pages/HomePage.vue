@@ -11,7 +11,7 @@
     </div>
 </template>
 <script>
-    import myFeatureServices from '../../services/myFeatureServices'
+    import MyFeatureServices from '../../services/myFeatureServices'
 
     export default {
         name: 'home-page',
@@ -21,9 +21,15 @@
             }
         },
         mounted() {
-            myFeatureServices.getSampleData().then(data => {
-                this.sampleData = data || [];
-            });
+            this.$identity.getUser()
+                .then((user) => {
+                    if (user) {
+                        let myFeatureServices = new MyFeatureServices(user.access_token)
+                        myFeatureServices.getSampleData().then(data => {
+                            this.sampleData = data || [];
+                        })
+                    }
+                })
         }
     }
 </script>

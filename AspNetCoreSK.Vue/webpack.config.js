@@ -1,8 +1,10 @@
-﻿'use strict';
+﻿/// <binding BeforeBuild='Run - Development' />
+'use strict';
 
 const path = require('path');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const distPath = path.resolve(__dirname, 'wwwroot');
 
@@ -45,6 +47,9 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('css/[name].css'),
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
+        new CopyWebpackPlugin([
+            { from: './node_modules/oidc-client/dist/*.js', to: distPath + '/js/[name].[ext]', toType: 'template' }
+        ])
     ]
 };

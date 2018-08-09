@@ -38,8 +38,8 @@ namespace AspNetCoreSk.IdentityServer
                     AllowAccessTokensViaBrowser = true,
                     RequireConsent = false,
                     AllowedCorsOrigins = { "https://localhost:44388" },
-                    RedirectUris = { "https://localhost:44388/callback" },
-                    PostLogoutRedirectUris = { "https://localhost:44388/" },
+                    RedirectUris = { "https://localhost:44388/static/callback.html" },
+                    PostLogoutRedirectUris = { "https://localhost:44388" },
                     ClientSecrets =
                     {
                         new Secret("secret1".Sha256())

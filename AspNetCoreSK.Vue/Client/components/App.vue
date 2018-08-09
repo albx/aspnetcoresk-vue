@@ -11,8 +11,8 @@
                         <li class="nav-item">
                             <router-link class="nav-link" to="/contact">Contact</router-link>
                         </li>
-                        <li class="nav-item">
-                            <a href="#" @click="signOut()">Logout</a>
+                        <li v-if="loggedIn" class="nav-item">
+                            <a class="nav-link" href="#" @click="signOut()">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -28,6 +28,11 @@
 
     export default {
         name: 'app',
+        data() {
+            return {
+                loggedIn: false
+            }
+        },
         mounted() {
             let self = this
             this.$identity
@@ -35,6 +40,9 @@
                 .then((user) => {
                     if (!user) {
                         self.$identity.signinRedirect()
+                    }
+                    else {
+                        self.loggedIn = true
                     }
                 })
         },

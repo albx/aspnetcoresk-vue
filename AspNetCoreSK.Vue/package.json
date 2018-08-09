@@ -28,7 +28,8 @@
     "webpack-hot-middleware": "^2.22.3",
     "webpack-merge": "^4.1.4",
     "vue-template-compiler": "^2.5.17",
-    "webpack-dev-middleware": "^1.8.4"
+    "webpack-dev-middleware": "^1.8.4",
+    "copy-webpack-plugin": "^4.5.2"
   },
   "dependencies": {
     "aspnet-prerendering": "^3.0.1",

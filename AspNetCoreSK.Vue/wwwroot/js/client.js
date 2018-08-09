@@ -61,7 +61,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "bc358d3f73cda9b43b7b"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "157dd26fcde65e6d3731"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -16120,7 +16120,11 @@ var render = function() {
       ? _c("div", { staticClass: "container" }, [_c("router-view")], 1)
       : _vm._e(),
     _vm._v(" "),
-    !_vm.loggedIn ? _c("div", [_c("h1", [_vm._v("Loading...")])]) : _vm._e()
+    !_vm.loggedIn
+      ? _c("div", { staticClass: "container" }, [
+          _c("h1", { staticClass: "text-lg-center" }, [_vm._v("Loading...")])
+        ])
+      : _vm._e()
   ])
 }
 var staticRenderFns = [

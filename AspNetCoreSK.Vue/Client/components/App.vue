@@ -21,8 +21,8 @@
         <div v-if="loggedIn" class="container">
             <router-view></router-view>
         </div>
-        <div v-if="!loggedIn">
-            <h1>Loading...</h1>
+        <div v-if="!loggedIn" class="container">
+            <h1 class="text-lg-center">Loading...</h1>
         </div>
     </div>
 </template>

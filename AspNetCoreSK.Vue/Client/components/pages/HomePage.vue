@@ -21,15 +21,12 @@
             }
         },
         mounted() {
-            this.$identity.getUser()
-                .then((user) => {
-                    if (user) {
-                        let myFeatureServices = new MyFeatureServices(user.access_token)
-                        myFeatureServices.getSampleData().then(data => {
-                            this.sampleData = data || [];
-                        })
-                    }
+            this.callAuthorizedApi((accessToken) => {
+                let myFeatureServices = new MyFeatureServices(accessToken)
+                myFeatureServices.getSampleData().then(data => {
+                    this.sampleData = data || [];
                 })
+            })
         }
     }
 </script>

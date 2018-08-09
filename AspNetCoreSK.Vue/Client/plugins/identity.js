@@ -11,6 +11,19 @@ const Identity = {
 
         Vue.identity = identityService;
         Vue.prototype.$identity = identityService;
+
+        Vue.mixin({
+            methods: {
+                callAuthorizedApi(api) {
+                    this.$identity.getUser()
+                        .then((user) => {
+                            if (user) {
+                                api(user.access_token);
+                            }
+                        });
+                }
+            }
+        });
     }
 };
 

@@ -61,7 +61,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "ca56930b2bd121d3847b"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "bc358d3f73cda9b43b7b"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -11599,13 +11599,11 @@ exports.default = {
     mounted: function mounted() {
         var _this = this;
 
-        this.$identity.getUser().then(function (user) {
-            if (user) {
-                var myFeatureServices = new _myFeatureServices2.default(user.access_token);
-                myFeatureServices.getSampleData().then(function (data) {
-                    _this.sampleData = data || [];
-                });
-            }
+        this.callAuthorizedApi(function (accessToken) {
+            var myFeatureServices = new _myFeatureServices2.default(accessToken);
+            myFeatureServices.getSampleData().then(function (data) {
+                _this.sampleData = data || [];
+            });
         });
     }
 }; //
@@ -11705,6 +11703,9 @@ exports.default = {
         }
     }
 }; //
+//
+//
+//
 //
 //
 //
@@ -15853,6 +15854,18 @@ var Identity = {
 
         Vue.identity = identityService;
         Vue.prototype.$identity = identityService;
+
+        Vue.mixin({
+            methods: {
+                callAuthorizedApi: function callAuthorizedApi(api) {
+                    this.$identity.getUser().then(function (user) {
+                        if (user) {
+                            api(user.access_token);
+                        }
+                    });
+                }
+            }
+        });
     }
 };
 
@@ -16035,45 +16048,50 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c(
-      "nav",
-      { staticClass: "navbar navbar-expand-lg navbar-dark bg-dark fixed-top" },
-      [
-        _c(
-          "div",
-          { staticClass: "container" },
+    _vm.loggedIn
+      ? _c(
+          "nav",
+          {
+            staticClass: "navbar navbar-expand-lg navbar-dark bg-dark fixed-top"
+          },
           [
-            _vm._m(0),
-            _vm._v(" "),
-            _c(
-              "router-link",
-              { staticClass: "navbar-brand", attrs: { to: "/" } },
-              [_vm._v("AspNetCoreSK.Vue - SPA")]
-            ),
-            _vm._v(" "),
             _c(
               "div",
-              {
-                staticClass: "navbar-collapse collapse",
-                attrs: { id: "navbarContent" }
-              },
+              { staticClass: "container" },
               [
-                _c("ul", { staticClass: "nav navbar-nav mr-auto" }, [
-                  _c(
-                    "li",
-                    { staticClass: "nav-item" },
-                    [
+                _vm._m(0),
+                _vm._v(" "),
+                _c(
+                  "router-link",
+                  { staticClass: "navbar-brand", attrs: { to: "/" } },
+                  [_vm._v("AspNetCoreSK.Vue - SPA")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "navbar-collapse collapse",
+                    attrs: { id: "navbarContent" }
+                  },
+                  [
+                    _c("ul", { staticClass: "nav navbar-nav mr-auto" }, [
                       _c(
-                        "router-link",
-                        { staticClass: "nav-link", attrs: { to: "/contact" } },
-                        [_vm._v("Contact")]
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _vm.loggedIn
-                    ? _c("li", { staticClass: "nav-item" }, [
+                        "li",
+                        { staticClass: "nav-item" },
+                        [
+                          _c(
+                            "router-link",
+                            {
+                              staticClass: "nav-link",
+                              attrs: { to: "/contact" }
+                            },
+                            [_vm._v("Contact")]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("li", { staticClass: "nav-item" }, [
                         _c(
                           "a",
                           {
@@ -16088,17 +16106,21 @@ var render = function() {
                           [_vm._v("Logout")]
                         )
                       ])
-                    : _vm._e()
-                ])
-              ]
+                    ])
+                  ]
+                )
+              ],
+              1
             )
-          ],
-          1
+          ]
         )
-      ]
-    ),
+      : _vm._e(),
     _vm._v(" "),
-    _c("div", { staticClass: "container" }, [_c("router-view")], 1)
+    _vm.loggedIn
+      ? _c("div", { staticClass: "container" }, [_c("router-view")], 1)
+      : _vm._e(),
+    _vm._v(" "),
+    !_vm.loggedIn ? _c("div", [_c("h1", [_vm._v("Loading...")])]) : _vm._e()
   ])
 }
 var staticRenderFns = [

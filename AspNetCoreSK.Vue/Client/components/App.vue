@@ -1,6 +1,6 @@
 ﻿<template>
     <div>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <nav v-if="loggedIn" class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -11,15 +11,18 @@
                         <li class="nav-item">
                             <router-link class="nav-link" to="/contact">Contact</router-link>
                         </li>
-                        <li v-if="loggedIn" class="nav-item">
+                        <li class="nav-item">
                             <a class="nav-link" href="#" @click="signOut()">Logout</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
-        <div class="container">
+        <div v-if="loggedIn" class="container">
             <router-view></router-view>
+        </div>
+        <div v-if="!loggedIn">
+            <h1>Loading...</h1>
         </div>
     </div>
 </template>

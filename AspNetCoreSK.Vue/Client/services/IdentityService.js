@@ -20,8 +20,13 @@ export default class IdentityService {
             .catch((err) => null);
     }
 
-    getAccessToken() {
-        return this._accessToken;
+    async getAccessToken() {
+        let user = await this.getUser();
+        if (user) {
+            return user.access_token;
+        }
+
+        return undefined;
     }
 
     signinRedirect() {

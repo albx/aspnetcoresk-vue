@@ -15,7 +15,10 @@ module.exports = {
             'bootstrap/dist/js/bootstrap.js',
             'bootstrap/dist/css/bootstrap.css'
         ],
-        'client': './Client/bootstrapper.js'
+        'client': [
+            'babel-polyfill',
+            './Client/bootstrapper.js'
+        ]
     },
     output: {
         path: distPath,

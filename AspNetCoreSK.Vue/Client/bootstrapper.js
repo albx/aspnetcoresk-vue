@@ -22,6 +22,14 @@ const app = new Vue({
     ...App
 });
 
+const setAccessToken = async function () {
+    let accessToken = await Vue.identity.getAccessToken();
+    console.log(accessToken);
+    if (accessToken) {
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
+    }
+};
 
+setAccessToken();
 
 app.$mount('#app');

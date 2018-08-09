@@ -21,11 +21,9 @@
             }
         },
         mounted() {
-            this.callAuthorizedApi((accessToken) => {
-                let myFeatureServices = new MyFeatureServices(accessToken)
-                myFeatureServices.getSampleData().then(data => {
-                    this.sampleData = data || [];
-                })
+            let myFeatureServices = new MyFeatureServices()
+            myFeatureServices.getSampleData().then(data => {
+                this.sampleData = data || [];
             })
         }
     }

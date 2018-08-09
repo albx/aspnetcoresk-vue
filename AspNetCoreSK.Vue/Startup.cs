@@ -37,9 +37,9 @@ namespace AspNetCoreSK.Vue
                 .AddIdentityServerAuthentication(options =>
                 {
                     options.Authority = "https://localhost:44316/";
-                    options.RequireHttpsMetadata = false;
+                    options.RequireHttpsMetadata = true;
 
-                    options.ApiName = "MyFeatureApi";
+                    options.ApiName = "MyFeaturesApi";
                 });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);

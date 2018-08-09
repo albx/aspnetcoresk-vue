@@ -11,6 +11,9 @@
                         <li class="nav-item">
                             <router-link class="nav-link" to="/contact">Contact</router-link>
                         </li>
+                        <li class="nav-item">
+                            <a href="#" @click="signOut()">Logout</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -24,6 +27,21 @@
     import Vue from 'vue'
 
     export default {
-        name: 'app'
+        name: 'app',
+        mounted() {
+            let self = this
+            this.$identity
+                .getUser()
+                .then((user) => {
+                    if (!user) {
+                        self.$identity.signinRedirect()
+                    }
+                })
+        },
+        methods: {
+            signOut() {
+                this.$identity.signoutRedirect()
+            }
+        }
     }
 </script>

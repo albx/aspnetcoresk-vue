@@ -9,6 +9,15 @@ namespace AspNetCoreSk.IdentityServer
 {
     public static class Config
     {
+        public static IEnumerable<IdentityResource> GetIdentityResources()
+        {
+            return new IdentityResource[]
+            {
+                new IdentityResources.OpenId(),
+                new IdentityResources.Profile()
+            };
+        }
+
         public static IEnumerable<ApiResource> GetApiResources()
         {
             return new ApiResource[]
@@ -24,8 +33,13 @@ namespace AspNetCoreSk.IdentityServer
                 new Client
                 {
                     ClientId = "aspnetcoresk.vue",
+                    ClientName = "AspnetCoreSK Webapp",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
+                    RequireConsent = false,
+                    AllowedCorsOrigins = { "https://localhost:44388" },
+                    RedirectUris = { "https://localhost:44388/callback" },
+                    PostLogoutRedirectUris = { "https://localhost:44388/" },
                     ClientSecrets =
                     {
                         new Secret("secret1".Sha256())

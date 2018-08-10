@@ -61,7 +61,7 @@
 /******/ 	
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "0d0084dd538706c8e371"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "05066f8ce6d831fddefc"; // eslint-disable-line no-unused-vars
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule; // eslint-disable-line no-unused-vars
@@ -23800,7 +23800,7 @@ var MyFeatureServices = function () {
     _createClass(MyFeatureServices, [{
         key: 'getSampleData',
         value: function getSampleData() {
-            return _axios2.default.get('/myfeature/api/sample').then(function (response) {
+            return _axios2.default.get('https://localhost:44308/api/values').then(function (response) {
                 return response.data;
             }).catch(function (err) {
                 console.log(err);

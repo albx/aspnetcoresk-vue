@@ -8,7 +8,7 @@ export default class MyFeatureServices {
     }
 
     getSampleData() {
-        return axios.get('/myfeature/api/sample')
+        return axios.get('https://localhost:44308/api/values')
             .then(response => response.data)
             .catch(err => {
                 console.log(err);

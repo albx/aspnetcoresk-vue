@@ -8,18 +8,18 @@ A simple starter kit for asp.net core project using VueJS as client framework an
 ## Projects
 - **AspNetCoreSk.IdentityServer** is the IdentityServer4 asp.net core project
 - **AspNetCoreSk.Vue** is the asp.net core client project
-- **AspNetCoreSk.Vue.Endpoint** is a simple Razor class library which contains an authorized webapi. It's referenced by the AspNetCoreSk.Vue project.
+- **AspNetCoreSk.Endpoints** is the webapi app which contains all the api invoked by the client.
 
 ## Getting started
 - Run EntityFrameworkCore **update-database** for the **AspNetCoreSk.IdentityServer** project.
 - Run **npm install** for the **AspNetCoreSk.Vue** project to install all the npm dependencies.
 - Run **webpack** to create the client's bundles.
-- Be sure to run both **AspNetCoreSk.IdentityServer** and **AspNetCoreSk.Vue** projects.
+- Be sure to run all the 3 projects **AspNetCoreSk.IdentityServer**, **AspNetCoreSk.Endpoints** and **AspNetCoreSk.Vue** projects.
 
 ## Flow
 The client application will run on the https://localhost:44388/ address.<br/>
 You will be redirected to the IdentityServer login page. Here you could login or register a new user (if it's the first time you run the application).<br/>
-After authentication you will be redirected to client app and you should see a list of 3 items in home page.
+After authentication you will be redirected to client app and you should see a list of 2 items in home page.
 
 ## References
 - **IdentityServer4** [https://identityserver4.readthedocs.io/en/release/](https://identityserver4.readthedocs.io/en/release/)

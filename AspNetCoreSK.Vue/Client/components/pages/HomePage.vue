@@ -20,9 +20,13 @@
                 sampleData: []
             }
         },
+        computed: {
+            myFeatureServices() {
+                return new MyFeatureServices()
+            }
+        },
         mounted() {
-            let myFeatureServices = new MyFeatureServices()
-            myFeatureServices.getSampleData().then(data => {
+            this.myFeatureServices.getSampleData().then(data => {
                 this.sampleData = data || [];
             })
         }

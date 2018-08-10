@@ -1,12 +1,13 @@
 ﻿'use strict';
 
 import Vue from 'vue';
-import axios from 'axios';
 
 import router from './router';
 
 import Identity from './plugins/identity';
 import App from './components/App.vue';
+
+import httpHelper from './services/httpHelper';
 
 Vue.use(Identity, {
     authority: "https://localhost:44316/",
@@ -22,14 +23,6 @@ const app = new Vue({
     ...App
 });
 
-const setAccessToken = async function () {
-    let accessToken = await Vue.identity.getAccessToken();
-    console.log(accessToken);
-    if (accessToken) {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
-    }
-};
-
-setAccessToken();
+httpHelper.setAuthorizationToken();
 
 app.$mount('#app');

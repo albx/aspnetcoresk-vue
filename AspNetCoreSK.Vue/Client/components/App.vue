@@ -11,8 +11,15 @@
                         <li class="nav-item">
                             <router-link class="nav-link" to="/contact">Contact</router-link>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" @click="signOut()">Logout</a>
+                    </ul>
+                    <ul class="nav navbar-nav mr-2">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Hi, {{ userName }}
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#" @click="signOut()">Logout</a>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -33,7 +40,8 @@
         name: 'app',
         data() {
             return {
-                loggedIn: false
+                loggedIn: false,
+                userName: ''
             }
         },
         mounted() {
@@ -45,6 +53,7 @@
                         self.$identity.signinRedirect()
                     }
                     else {
+                        self.userName = user.profile.name
                         self.loggedIn = true
                     }
                 })
